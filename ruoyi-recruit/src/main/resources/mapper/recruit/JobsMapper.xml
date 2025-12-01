@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.JobsMapper">
+    
+    <resultMap type="Jobs" id="JobsResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="department"    column="department"    />
+        <result property="title"    column="title"    />
+        <result property="type"    column="type"    />
+        <result property="description"    column="description"    />
+        <result property="techRequirements"    column="tech_requirements"    />
+        <result property="bonusPoints"    column="bonus_points"    />
+        <result property="minSalary"    column="min_salary"    />
+        <result property="maxSalary"    column="max_salary"    />
+        <result property="provinceId"    column="province_id"    />
+        <result property="cityId"    column="city_id"    />
+        <result property="addressDetail"    column="address_detail"    />
+        <result property="workNature"    column="work_nature"    />
+        <result property="requiredDegree"    column="required_degree"    />
+        <result property="headcount"    column="headcount"    />
+        <result property="requiredStartDate"    column="required_start_date"    />
+        <result property="deadline"    column="deadline"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="updatedAt"    column="updated_at"    />
+        <result property="status"    column="status"    />
+        <result property="viewCount"    column="view_count"    />
+        <result property="postedByUserId"    column="posted_by_user_id"    />
+    </resultMap>
+
+    <sql id="selectJobsVo">
+        select id, company_id, department, title, type, description, tech_requirements, bonus_points, min_salary, max_salary, province_id, city_id, address_detail, work_nature, required_degree, headcount, required_start_date, deadline, created_at, updated_at, status, view_count, posted_by_user_id from jobs
+    </sql>
+
+    <select id="selectJobsList" parameterType="Jobs" resultMap="JobsResult">
+        <include refid="selectJobsVo"/>
+        <where>  
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="workNature != null "> and work_nature = #{workNature}</if>
+            <if test="requiredDegree != null "> and required_degree = #{requiredDegree}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectJobsById" parameterType="Long" resultMap="JobsResult">
+        <include refid="selectJobsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertJobs" parameterType="Jobs" useGeneratedKeys="true" keyProperty="id">
+        insert into jobs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="department != null">department,</if>
+            <if test="title != null">title,</if>
+            <if test="type != null">type,</if>
+            <if test="description != null">description,</if>
+            <if test="techRequirements != null">tech_requirements,</if>
+            <if test="bonusPoints != null">bonus_points,</if>
+            <if test="minSalary != null">min_salary,</if>
+            <if test="maxSalary != null">max_salary,</if>
+            <if test="provinceId != null">province_id,</if>
+            <if test="cityId != null">city_id,</if>
+            <if test="addressDetail != null">address_detail,</if>
+            <if test="workNature != null">work_nature,</if>
+            <if test="requiredDegree != null">required_degree,</if>
+            <if test="headcount != null">headcount,</if>
+            <if test="requiredStartDate != null">required_start_date,</if>
+            <if test="deadline != null">deadline,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="updatedAt != null">updated_at,</if>
+            <if test="status != null">status,</if>
+            <if test="viewCount != null">view_count,</if>
+            <if test="postedByUserId != null">posted_by_user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="department != null">#{department},</if>
+            <if test="title != null">#{title},</if>
+            <if test="type != null">#{type},</if>
+            <if test="description != null">#{description},</if>
+            <if test="techRequirements != null">#{techRequirements},</if>
+            <if test="bonusPoints != null">#{bonusPoints},</if>
+            <if test="minSalary != null">#{minSalary},</if>
+            <if test="maxSalary != null">#{maxSalary},</if>
+            <if test="provinceId != null">#{provinceId},</if>
+            <if test="cityId != null">#{cityId},</if>
+            <if test="addressDetail != null">#{addressDetail},</if>
+            <if test="workNature != null">#{workNature},</if>
+            <if test="requiredDegree != null">#{requiredDegree},</if>
+            <if test="headcount != null">#{headcount},</if>
+            <if test="requiredStartDate != null">#{requiredStartDate},</if>
+            <if test="deadline != null">#{deadline},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+            <if test="status != null">#{status},</if>
+            <if test="viewCount != null">#{viewCount},</if>
+            <if test="postedByUserId != null">#{postedByUserId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateJobs" parameterType="Jobs">
+        update jobs
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="department != null">department = #{department},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="techRequirements != null">tech_requirements = #{techRequirements},</if>
+            <if test="bonusPoints != null">bonus_points = #{bonusPoints},</if>
+            <if test="minSalary != null">min_salary = #{minSalary},</if>
+            <if test="maxSalary != null">max_salary = #{maxSalary},</if>
+            <if test="provinceId != null">province_id = #{provinceId},</if>
+            <if test="cityId != null">city_id = #{cityId},</if>
+            <if test="addressDetail != null">address_detail = #{addressDetail},</if>
+            <if test="workNature != null">work_nature = #{workNature},</if>
+            <if test="requiredDegree != null">required_degree = #{requiredDegree},</if>
+            <if test="headcount != null">headcount = #{headcount},</if>
+            <if test="requiredStartDate != null">required_start_date = #{requiredStartDate},</if>
+            <if test="deadline != null">deadline = #{deadline},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="postedByUserId != null">posted_by_user_id = #{postedByUserId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteJobsById" parameterType="Long">
+        delete from jobs where id = #{id}
+    </delete>
+
+    <delete id="deleteJobsByIds" parameterType="String">
+        delete from jobs where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
