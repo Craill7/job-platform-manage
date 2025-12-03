@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.EventsMapper">
+    
+    <resultMap type="Events" id="EventsResult">
+        <result property="id"    column="id"    />
+        <result property="adminUserId"    column="admin_user_id"    />
+        <result property="eventTitle"    column="event_title"    />
+        <result property="eventSummary"    column="event_summary"    />
+        <result property="eventStartTime"    column="event_start_time"    />
+        <result property="eventEndTime"    column="event_end_time"    />
+        <result property="eventLocation"    column="event_location"    />
+        <result property="targetAudience"    column="target_audience"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="updatedAt"    column="updated_at"    />
+    </resultMap>
+
+    <sql id="selectEventsVo">
+        select id, admin_user_id, event_title, event_summary, event_start_time, event_end_time, event_location, target_audience, created_at, updated_at from events
+    </sql>
+
+    <select id="selectEventsList" parameterType="Events" resultMap="EventsResult">
+        <include refid="selectEventsVo"/>
+        <where>  
+            <if test="eventTitle != null  and eventTitle != ''"> and event_title like concat('%', #{eventTitle}, '%')</if>
+            <if test="params.beginEventStartTime != null and params.beginEventStartTime != '' and params.endEventStartTime != null and params.endEventStartTime != ''"> and event_start_time between #{params.beginEventStartTime} and #{params.endEventStartTime}</if>
+            <if test="params.beginEventEndTime != null and params.beginEventEndTime != '' and params.endEventEndTime != null and params.endEventEndTime != ''"> and event_end_time between #{params.beginEventEndTime} and #{params.endEventEndTime}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectEventsById" parameterType="Long" resultMap="EventsResult">
+        <include refid="selectEventsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertEvents" parameterType="Events" useGeneratedKeys="true" keyProperty="id">
+        insert into events
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adminUserId != null">admin_user_id,</if>
+            <if test="eventTitle != null and eventTitle != ''">event_title,</if>
+            <if test="eventSummary != null">event_summary,</if>
+            <if test="eventStartTime != null">event_start_time,</if>
+            <if test="eventEndTime != null">event_end_time,</if>
+            <if test="eventLocation != null">event_location,</if>
+            <if test="targetAudience != null">target_audience,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="updatedAt != null">updated_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="adminUserId != null">#{adminUserId},</if>
+            <if test="eventTitle != null and eventTitle != ''">#{eventTitle},</if>
+            <if test="eventSummary != null">#{eventSummary},</if>
+            <if test="eventStartTime != null">#{eventStartTime},</if>
+            <if test="eventEndTime != null">#{eventEndTime},</if>
+            <if test="eventLocation != null">#{eventLocation},</if>
+            <if test="targetAudience != null">#{targetAudience},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEvents" parameterType="Events">
+        update events
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="adminUserId != null">admin_user_id = #{adminUserId},</if>
+            <if test="eventTitle != null and eventTitle != ''">event_title = #{eventTitle},</if>
+            <if test="eventSummary != null">event_summary = #{eventSummary},</if>
+            <if test="eventStartTime != null">event_start_time = #{eventStartTime},</if>
+            <if test="eventEndTime != null">event_end_time = #{eventEndTime},</if>
+            <if test="eventLocation != null">event_location = #{eventLocation},</if>
+            <if test="targetAudience != null">target_audience = #{targetAudience},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEventsById" parameterType="Long">
+        delete from events where id = #{id}
+    </delete>
+
+    <delete id="deleteEventsByIds" parameterType="String">
+        delete from events where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
