@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.TCompanyNaturesMapper">
+    
+    <resultMap type="TCompanyNatures" id="TCompanyNaturesResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectTCompanyNaturesVo">
+        select id, name from t_company_natures
+    </sql>
+
+    <select id="selectTCompanyNaturesList" parameterType="TCompanyNatures" resultMap="TCompanyNaturesResult">
+        <include refid="selectTCompanyNaturesVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectTCompanyNaturesById" parameterType="Long" resultMap="TCompanyNaturesResult">
+        <include refid="selectTCompanyNaturesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTCompanyNatures" parameterType="TCompanyNatures" useGeneratedKeys="true" keyProperty="id">
+        insert into t_company_natures
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTCompanyNatures" parameterType="TCompanyNatures">
+        update t_company_natures
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTCompanyNaturesById" parameterType="Long">
+        delete from t_company_natures where id = #{id}
+    </delete>
+
+    <delete id="deleteTCompanyNaturesByIds" parameterType="String">
+        delete from t_company_natures where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

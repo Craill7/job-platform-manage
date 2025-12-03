@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.TCompanyScalesMapper">
+    
+    <resultMap type="TCompanyScales" id="TCompanyScalesResult">
+        <result property="id"    column="id"    />
+        <result property="scale"    column="scale"    />
+    </resultMap>
+
+    <sql id="selectTCompanyScalesVo">
+        select id, scale from t_company_scales
+    </sql>
+
+    <select id="selectTCompanyScalesList" parameterType="TCompanyScales" resultMap="TCompanyScalesResult">
+        <include refid="selectTCompanyScalesVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="scale != null  and scale != ''"> and scale like concat('%', #{scale}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectTCompanyScalesById" parameterType="Long" resultMap="TCompanyScalesResult">
+        <include refid="selectTCompanyScalesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTCompanyScales" parameterType="TCompanyScales" useGeneratedKeys="true" keyProperty="id">
+        insert into t_company_scales
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="scale != null and scale != ''">scale,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="scale != null and scale != ''">#{scale},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTCompanyScales" parameterType="TCompanyScales">
+        update t_company_scales
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="scale != null and scale != ''">scale = #{scale},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTCompanyScalesById" parameterType="Long">
+        delete from t_company_scales where id = #{id}
+    </delete>
+
+    <delete id="deleteTCompanyScalesByIds" parameterType="String">
+        delete from t_company_scales where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

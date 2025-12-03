@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.TagsMapper">
+    
+    <resultMap type="Tags" id="TagsResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectTagsVo">
+        select id, name, category_id, created_by, created_at from tags
+    </sql>
+
+    <select id="selectTagsList" parameterType="Tags" resultMap="TagsResult">
+        <include refid="selectTagsVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectTagsById" parameterType="Long" resultMap="TagsResult">
+        <include refid="selectTagsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTags" parameterType="Tags" useGeneratedKeys="true" keyProperty="id">
+        insert into tags
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="createdAt != null">created_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTags" parameterType="Tags">
+        update tags
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTagsById" parameterType="Long">
+        delete from tags where id = #{id}
+    </delete>
+
+    <delete id="deleteTagsByIds" parameterType="String">
+        delete from tags where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
