@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.TIndustriesMapper">
+    
+    <resultMap type="TIndustries" id="TIndustriesResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectTIndustriesVo">
+        select id, name from t_industries
+    </sql>
+
+    <select id="selectTIndustriesList" parameterType="TIndustries" resultMap="TIndustriesResult">
+        <include refid="selectTIndustriesVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectTIndustriesById" parameterType="Long" resultMap="TIndustriesResult">
+        <include refid="selectTIndustriesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTIndustries" parameterType="TIndustries" useGeneratedKeys="true" keyProperty="id">
+        insert into t_industries
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTIndustries" parameterType="TIndustries">
+        update t_industries
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTIndustriesById" parameterType="Long">
+        delete from t_industries where id = #{id}
+    </delete>
+
+    <delete id="deleteTIndustriesByIds" parameterType="String">
+        delete from t_industries where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
