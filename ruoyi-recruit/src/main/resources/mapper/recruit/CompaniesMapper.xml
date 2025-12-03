@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.CompaniesMapper">
+    
+    <resultMap type="Companies" id="CompaniesResult">
+        <result property="companyId"    column="company_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="description"    column="description"    />
+        <result property="logoUrl"    column="logo_url"    />
+        <result property="industryId"    column="industry_id"    />
+        <result property="natureId"    column="nature_id"    />
+        <result property="companyScaleId"    column="company_scale_id"    />
+        <result property="companyAddress"    column="company_address"    />
+        <result property="contactPersonName"    column="contact_person_name"    />
+        <result property="contactPersonPhone"    column="contact_person_phone"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectCompaniesVo">
+        select company_id, user_id, company_name, description, logo_url, industry_id, nature_id, company_scale_id, company_address, contact_person_name, contact_person_phone, created_at from companies
+    </sql>
+
+    <select id="selectCompaniesList" parameterType="Companies" resultMap="CompaniesResult">
+        <include refid="selectCompaniesVo"/>
+        <where>  
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="industryId != null "> and industry_id = #{industryId}</if>
+            <if test="natureId != null "> and nature_id = #{natureId}</if>
+            <if test="companyScaleId != null "> and company_scale_id = #{companyScaleId}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectCompaniesByCompanyId" parameterType="Long" resultMap="CompaniesResult">
+        <include refid="selectCompaniesVo"/>
+        where company_id = #{companyId}
+    </select>
+
+    <insert id="insertCompanies" parameterType="Companies" useGeneratedKeys="true" keyProperty="companyId">
+        insert into companies
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="companyName != null">company_name,</if>
+            <if test="description != null">description,</if>
+            <if test="logoUrl != null">logo_url,</if>
+            <if test="industryId != null">industry_id,</if>
+            <if test="natureId != null">nature_id,</if>
+            <if test="companyScaleId != null">company_scale_id,</if>
+            <if test="companyAddress != null">company_address,</if>
+            <if test="contactPersonName != null">contact_person_name,</if>
+            <if test="contactPersonPhone != null">contact_person_phone,</if>
+            <if test="createdAt != null">created_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="companyName != null">#{companyName},</if>
+            <if test="description != null">#{description},</if>
+            <if test="logoUrl != null">#{logoUrl},</if>
+            <if test="industryId != null">#{industryId},</if>
+            <if test="natureId != null">#{natureId},</if>
+            <if test="companyScaleId != null">#{companyScaleId},</if>
+            <if test="companyAddress != null">#{companyAddress},</if>
+            <if test="contactPersonName != null">#{contactPersonName},</if>
+            <if test="contactPersonPhone != null">#{contactPersonPhone},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCompanies" parameterType="Companies">
+        update companies
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="logoUrl != null">logo_url = #{logoUrl},</if>
+            <if test="industryId != null">industry_id = #{industryId},</if>
+            <if test="natureId != null">nature_id = #{natureId},</if>
+            <if test="companyScaleId != null">company_scale_id = #{companyScaleId},</if>
+            <if test="companyAddress != null">company_address = #{companyAddress},</if>
+            <if test="contactPersonName != null">contact_person_name = #{contactPersonName},</if>
+            <if test="contactPersonPhone != null">contact_person_phone = #{contactPersonPhone},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where company_id = #{companyId}
+    </update>
+
+    <delete id="deleteCompaniesByCompanyId" parameterType="Long">
+        delete from companies where company_id = #{companyId}
+    </delete>
+
+    <delete id="deleteCompaniesByCompanyIds" parameterType="String">
+        delete from companies where company_id in 
+        <foreach item="companyId" collection="array" open="(" separator="," close=")">
+            #{companyId}
+        </foreach>
+    </delete>
+</mapper>
