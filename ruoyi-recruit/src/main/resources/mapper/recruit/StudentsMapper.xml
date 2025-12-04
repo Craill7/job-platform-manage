@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.StudentsMapper">
+    
+    <resultMap type="Students" id="StudentsResult">
+        <result property="userId"    column="user_id"    />
+        <result property="avatarUrl"    column="avatar_url"    />
+        <result property="fullName"    column="full_name"    />
+        <result property="gender"    column="gender"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="dateOfBirth"    column="date_of_birth"    />
+        <result property="jobSeekingStatus"    column="job_seeking_status"    />
+        <result property="expectedPosition"    column="expected_position"    />
+        <result property="expectedMinSalary"    column="expected_min_salary"    />
+        <result property="expectedMaxSalary"    column="expected_max_salary"    />
+        <result property="skillsSummary"    column="skills_summary"    />
+        <result property="currentTemplateId"    column="current_template_id"    />
+    </resultMap>
+
+    <sql id="selectStudentsVo">
+        select user_id, avatar_url, full_name, gender, student_id, phone_number, date_of_birth, job_seeking_status, expected_position, expected_min_salary, expected_max_salary, skills_summary, current_template_id from students
+    </sql>
+
+    <select id="selectStudentsList" parameterType="Students" resultMap="StudentsResult">
+        <include refid="selectStudentsVo"/>
+        <where>  
+            <if test="fullName != null  and fullName != ''"> and full_name like concat('%', #{fullName}, '%')</if>
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="jobSeekingStatus != null "> and job_seeking_status = #{jobSeekingStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentsByUserId" parameterType="Long" resultMap="StudentsResult">
+        <include refid="selectStudentsVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertStudents" parameterType="Students">
+        insert into students
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="avatarUrl != null">avatar_url,</if>
+            <if test="fullName != null">full_name,</if>
+            <if test="gender != null">gender,</if>
+            <if test="studentId != null">student_id,</if>
+            <if test="phoneNumber != null">phone_number,</if>
+            <if test="dateOfBirth != null">date_of_birth,</if>
+            <if test="jobSeekingStatus != null">job_seeking_status,</if>
+            <if test="expectedPosition != null">expected_position,</if>
+            <if test="expectedMinSalary != null">expected_min_salary,</if>
+            <if test="expectedMaxSalary != null">expected_max_salary,</if>
+            <if test="skillsSummary != null">skills_summary,</if>
+            <if test="currentTemplateId != null">current_template_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="avatarUrl != null">#{avatarUrl},</if>
+            <if test="fullName != null">#{fullName},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="studentId != null">#{studentId},</if>
+            <if test="phoneNumber != null">#{phoneNumber},</if>
+            <if test="dateOfBirth != null">#{dateOfBirth},</if>
+            <if test="jobSeekingStatus != null">#{jobSeekingStatus},</if>
+            <if test="expectedPosition != null">#{expectedPosition},</if>
+            <if test="expectedMinSalary != null">#{expectedMinSalary},</if>
+            <if test="expectedMaxSalary != null">#{expectedMaxSalary},</if>
+            <if test="skillsSummary != null">#{skillsSummary},</if>
+            <if test="currentTemplateId != null">#{currentTemplateId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudents" parameterType="Students">
+        update students
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="avatarUrl != null">avatar_url = #{avatarUrl},</if>
+            <if test="fullName != null">full_name = #{fullName},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="phoneNumber != null">phone_number = #{phoneNumber},</if>
+            <if test="dateOfBirth != null">date_of_birth = #{dateOfBirth},</if>
+            <if test="jobSeekingStatus != null">job_seeking_status = #{jobSeekingStatus},</if>
+            <if test="expectedPosition != null">expected_position = #{expectedPosition},</if>
+            <if test="expectedMinSalary != null">expected_min_salary = #{expectedMinSalary},</if>
+            <if test="expectedMaxSalary != null">expected_max_salary = #{expectedMaxSalary},</if>
+            <if test="skillsSummary != null">skills_summary = #{skillsSummary},</if>
+            <if test="currentTemplateId != null">current_template_id = #{currentTemplateId},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteStudentsByUserId" parameterType="Long">
+        delete from students where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteStudentsByUserIds" parameterType="String">
+        delete from students where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+</mapper>
