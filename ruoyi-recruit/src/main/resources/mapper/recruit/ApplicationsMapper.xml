@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.ApplicationsMapper">
+    
+    <resultMap type="Applications" id="ApplicationsResult">
+        <result property="id"    column="id"    />
+        <result property="jobId"    column="job_id"    />
+        <result property="studentUserId"    column="student_user_id"    />
+        <result property="resumeId"    column="resume_id"    />
+        <result property="status"    column="status"    />
+        <result property="submittedAt"    column="submitted_at"    />
+        <result property="updatedAt"    column="updated_at"    />
+    </resultMap>
+
+    <sql id="selectApplicationsVo">
+        select id, job_id, student_user_id, resume_id, status, submitted_at, updated_at from applications
+    </sql>
+
+    <select id="selectApplicationsList" parameterType="Applications" resultMap="ApplicationsResult">
+        <include refid="selectApplicationsVo"/>
+        <where>  
+            <if test="jobId != null "> and job_id = #{jobId}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="params.beginSubmittedAt != null and params.beginSubmittedAt != '' and params.endSubmittedAt != null and params.endSubmittedAt != ''"> and submitted_at between #{params.beginSubmittedAt} and #{params.endSubmittedAt}</if>
+            <if test="params.beginUpdatedAt != null and params.beginUpdatedAt != '' and params.endUpdatedAt != null and params.endUpdatedAt != ''"> and updated_at between #{params.beginUpdatedAt} and #{params.endUpdatedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectApplicationsById" parameterType="Long" resultMap="ApplicationsResult">
+        <include refid="selectApplicationsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertApplications" parameterType="Applications" useGeneratedKeys="true" keyProperty="id">
+        insert into applications
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobId != null">job_id,</if>
+            <if test="studentUserId != null">student_user_id,</if>
+            <if test="resumeId != null">resume_id,</if>
+            <if test="status != null">status,</if>
+            <if test="submittedAt != null">submitted_at,</if>
+            <if test="updatedAt != null">updated_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobId != null">#{jobId},</if>
+            <if test="studentUserId != null">#{studentUserId},</if>
+            <if test="resumeId != null">#{resumeId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="submittedAt != null">#{submittedAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateApplications" parameterType="Applications">
+        update applications
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="jobId != null">job_id = #{jobId},</if>
+            <if test="studentUserId != null">student_user_id = #{studentUserId},</if>
+            <if test="resumeId != null">resume_id = #{resumeId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="submittedAt != null">submitted_at = #{submittedAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteApplicationsById" parameterType="Long">
+        delete from applications where id = #{id}
+    </delete>
+
+    <delete id="deleteApplicationsByIds" parameterType="String">
+        delete from applications where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
