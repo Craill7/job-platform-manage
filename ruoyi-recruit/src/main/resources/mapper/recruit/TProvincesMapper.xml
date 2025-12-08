@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.TProvincesMapper">
+    
+    <resultMap type="TProvinces" id="TProvincesResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectTProvincesVo">
+        select id, code, name from t_provinces
+    </sql>
+
+    <select id="selectTProvincesList" parameterType="TProvinces" resultMap="TProvincesResult">
+        <include refid="selectTProvincesVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+        order by id
+    </select>
+    
+    <select id="selectTProvincesById" parameterType="Long" resultMap="TProvincesResult">
+        <include refid="selectTProvincesVo"/>
+        where id = #{id}
+    </select>
+
+</mapper>
+
