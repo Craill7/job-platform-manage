@@ -9,6 +9,15 @@ export function listCompanies(query) {
   })
 }
 
+// 根据公司名称模糊查询公司列表（用于下拉选择）
+export function searchCompanies(companyName) {
+  return request({
+    url: '/recruit/companies/search',
+    method: 'get',
+    params: { companyName: companyName }
+  })
+}
+
 // 查询企业管理详细
 export function getCompanies(companyId) {
   return request({

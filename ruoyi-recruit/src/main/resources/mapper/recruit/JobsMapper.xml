@@ -31,25 +31,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectJobsVo">
-        select id, company_id, department, title, type, description, tech_requirements, bonus_points, min_salary, max_salary, province_id, city_id, address_detail, work_nature, required_degree, headcount, required_start_date, deadline, created_at, updated_at, status, view_count, posted_by_user_id from jobs
+        select j.id, j.company_id, j.department, j.title, j.type, j.description, j.tech_requirements, j.bonus_points, j.min_salary, j.max_salary, j.province_id, j.city_id, j.address_detail, j.work_nature, j.required_degree, j.headcount, j.required_start_date, j.deadline, j.created_at, j.updated_at, j.status, j.view_count, j.posted_by_user_id from jobs j
     </sql>
 
     <select id="selectJobsList" parameterType="Jobs" resultMap="JobsResult">
         <include refid="selectJobsVo"/>
+        <if test="companyName != null and companyName != ''">
+            left join companies c on j.company_id = c.company_id
+        </if>
         <where>  
-            <if test="companyId != null "> and company_id = #{companyId}</if>
-            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
-            <if test="type != null "> and type = #{type}</if>
-            <if test="workNature != null "> and work_nature = #{workNature}</if>
-            <if test="requiredDegree != null "> and required_degree = #{requiredDegree}</if>
-            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
-            <if test="status != null "> and status = #{status}</if>
+            <if test="companyId != null "> and j.company_id = #{companyId}</if>
+            <if test="companyName != null and companyName != ''"> and c.company_name like concat('%', #{companyName}, '%')</if>
+            <if test="title != null  and title != ''"> and j.title like concat('%', #{title}, '%')</if>
+            <if test="type != null "> and j.type = #{type}</if>
+            <if test="workNature != null "> and j.work_nature = #{workNature}</if>
+            <if test="requiredDegree != null "> and j.required_degree = #{requiredDegree}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and j.created_at >= #{params.beginCreatedAt} and j.created_at &lt; DATE_ADD(#{params.endCreatedAt}, INTERVAL 1 DAY)</if>
+            <if test="status != null "> and j.status = #{status}</if>
         </where>
     </select>
     
     <select id="selectJobsById" parameterType="Long" resultMap="JobsResult">
         <include refid="selectJobsVo"/>
-        where id = #{id}
+        where j.id = #{id}
     </select>
 
     <insert id="insertJobs" parameterType="Jobs" useGeneratedKeys="true" keyProperty="id">

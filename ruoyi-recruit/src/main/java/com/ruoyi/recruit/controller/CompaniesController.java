@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -57,6 +58,24 @@ public class CompaniesController extends BaseController
         List<Companies> list = companiesService.selectCompaniesList(companies);
         ExcelUtil<Companies> util = new ExcelUtil<Companies>(Companies.class);
         util.exportExcel(response, list, "企业管理数据");
+    }
+
+    /**
+     * 根据公司名称模糊查询公司列表（用于下拉选择）
+     */
+    @GetMapping("/search")
+    public AjaxResult searchCompanies(@RequestParam(value = "companyName", required = false) String companyName)
+    {
+        Companies companies = new Companies();
+        if (companyName != null && !companyName.isEmpty()) {
+            companies.setCompanyName(companyName);
+        }
+        List<Companies> list = companiesService.selectCompaniesList(companies);
+        // 限制返回数量，最多返回10条
+        if (list != null && list.size() > 10) {
+            list = list.subList(0, 10);
+        }
+        return success(list);
     }
 
     /**

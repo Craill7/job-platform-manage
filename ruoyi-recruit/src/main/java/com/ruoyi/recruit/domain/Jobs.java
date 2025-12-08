@@ -25,6 +25,15 @@ public class Jobs extends BaseEntity
     @Excel(name = "公司名称")
     private Long companyId;
 
+    /** 公司名称（用于显示，通过companyId关联查询获得） */
+    private String companyName;
+
+    /** 省份名称（用于显示，通过provinceId关联查询获得） */
+    private String provinceName;
+
+    /** 城市名称（用于显示，通过cityId关联查询获得） */
+    private String cityName;
+
     /** 所属部门 */
     @Excel(name = "所属部门")
     private String department;
@@ -116,6 +125,16 @@ public class Jobs extends BaseEntity
     public Long getCompanyId() 
     {
         return companyId;
+    }
+
+    public String getCompanyName() 
+    {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) 
+    {
+        this.companyName = companyName;
     }
 
     public void setDepartment(String department) 
@@ -216,6 +235,26 @@ public class Jobs extends BaseEntity
     public Long getCityId() 
     {
         return cityId;
+    }
+
+    public void setProvinceName(String provinceName) 
+    {
+        this.provinceName = provinceName;
+    }
+
+    public String getProvinceName() 
+    {
+        return provinceName;
+    }
+
+    public void setCityName(String cityName) 
+    {
+        this.cityName = cityName;
+    }
+
+    public String getCityName() 
+    {
+        return cityName;
     }
 
     public void setAddressDetail(String addressDetail) 
@@ -333,6 +372,7 @@ public class Jobs extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("companyId", getCompanyId())
+            .append("companyName", getCompanyName())
             .append("department", getDepartment())
             .append("title", getTitle())
             .append("type", getType())
@@ -342,7 +382,9 @@ public class Jobs extends BaseEntity
             .append("minSalary", getMinSalary())
             .append("maxSalary", getMaxSalary())
             .append("provinceId", getProvinceId())
+            .append("provinceName", getProvinceName())
             .append("cityId", getCityId())
+            .append("cityName", getCityName())
             .append("addressDetail", getAddressDetail())
             .append("workNature", getWorkNature())
             .append("requiredDegree", getRequiredDegree())

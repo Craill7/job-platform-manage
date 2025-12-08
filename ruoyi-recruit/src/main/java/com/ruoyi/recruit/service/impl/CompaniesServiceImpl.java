@@ -32,6 +32,18 @@ public class CompaniesServiceImpl implements ICompaniesService
     }
 
     /**
+     * 根据公司名称查询企业管理
+     * 
+     * @param companyName 公司名称
+     * @return 企业管理
+     */
+    @Override
+    public Companies selectCompaniesByCompanyName(String companyName)
+    {
+        return companiesMapper.selectCompaniesByCompanyName(companyName);
+    }
+
+    /**
      * 查询企业管理列表
      * 
      * @param companies 企业管理

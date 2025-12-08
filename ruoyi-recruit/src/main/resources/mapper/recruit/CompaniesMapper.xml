@@ -39,6 +39,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where company_id = #{companyId}
     </select>
 
+    <select id="selectCompaniesByCompanyName" parameterType="String" resultMap="CompaniesResult">
+        <include refid="selectCompaniesVo"/>
+        where company_name = #{companyName}
+    </select>
+
     <insert id="insertCompanies" parameterType="Companies" useGeneratedKeys="true" keyProperty="companyId">
         insert into companies
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="公司名称" prop="companyId">
+      <el-form-item label="公司名称" prop="companyName">
         <el-input
-          v-model="queryParams.companyId"
+          v-model="queryParams.companyName"
           placeholder="请输入公司名称"
           clearable
           @keyup.enter="handleQuery"
@@ -108,10 +108,14 @@
     <el-table v-loading="loading" :data="jobsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="岗位ID" align="center" prop="id" />
-      <el-table-column label="公司名称" align="center" prop="companyId" />
+      <el-table-column label="公司名称" align="center" prop="companyName" />
       <el-table-column label="所属部门" align="center" prop="department" />
       <el-table-column label="岗位名称" align="center" prop="title" />
-      <el-table-column label="岗位类别" align="center" prop="type" />
+      <el-table-column label="岗位类别" align="center" prop="type">
+        <template #default="scope">
+          {{ getCategoryName(scope.row.type) }}
+        </template>
+      </el-table-column>
       <el-table-column label="最少薪资(k)" align="center" prop="minSalary" />
       <el-table-column label="最多薪资(k)" align="center" prop="maxSalary" />
       <el-table-column label="岗位性质" align="center" prop="workNature">
@@ -130,7 +134,6 @@
           <dict-tag :options="biz_job_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="岗位浏览次数" align="center" prop="viewCount" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recruit:jobs:edit']">修改</el-button>
@@ -150,14 +153,35 @@
     <!-- 添加或修改岗位管理对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="jobsRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="公司名称" prop="companyId">
-          <el-input v-model="form.companyId" placeholder="请输入公司名称" />
+        <el-form-item label="公司名称" prop="companyName">
+          <el-autocomplete
+            v-model="form.companyName"
+            :fetch-suggestions="queryCompanySearch"
+            placeholder="请输入公司名称进行搜索"
+            clearable
+            style="width: 100%"
+            @select="handleCompanySelect"
+          >
+            <template #default="{ item }">
+              <div>{{ item.companyName }}</div>
+            </template>
+          </el-autocomplete>
         </el-form-item>
         <el-form-item label="所属部门" prop="department">
           <el-input v-model="form.department" placeholder="请输入所属部门" />
         </el-form-item>
         <el-form-item label="岗位名称" prop="title">
           <el-input v-model="form.title" placeholder="请输入岗位名称" />
+        </el-form-item>
+        <el-form-item label="岗位类别" prop="type">
+          <el-select v-model="form.type" placeholder="请选择岗位类别" clearable>
+            <el-option
+              v-for="category in jobCategories"
+              :key="category.id"
+              :label="category.name"
+              :value="category.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="岗位描述" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
@@ -175,10 +199,24 @@
           <el-input v-model="form.maxSalary" placeholder="请输入最多薪资(k)" />
         </el-form-item>
         <el-form-item label="省份" prop="provinceId">
-          <el-input v-model="form.provinceId" placeholder="请输入省份" />
+          <el-select v-model="form.provinceId" placeholder="请选择省份" clearable @change="handleProvinceChange">
+            <el-option
+              v-for="province in provinces"
+              :key="province.id"
+              :label="province.name"
+              :value="province.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="城市" prop="cityId">
-          <el-input v-model="form.cityId" placeholder="请输入城市" />
+          <el-select v-model="form.cityId" placeholder="请先选择省份" clearable :disabled="!form.provinceId">
+            <el-option
+              v-for="city in cities"
+              :key="city.id"
+              :label="city.name"
+              :value="city.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="详细地址" prop="addressDetail">
           <el-input v-model="form.addressDetail" placeholder="请输入详细地址" />
@@ -232,9 +270,6 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="岗位浏览次数" prop="viewCount">
-          <el-input v-model="form.viewCount" placeholder="请输入岗位浏览次数" />
-        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -248,6 +283,10 @@
 
 <script setup name="Jobs">
 import { listJobs, getJobs, delJobs, addJobs, updateJobs } from "@/api/recruit/jobs"
+import { listCategories } from "@/api/recruit/categories"
+import { listProvinces } from "@/api/recruit/provinces"
+import { listCitiesByProvince } from "@/api/recruit/cities"
+import { searchCompanies } from "@/api/recruit/companies"
 
 const { proxy } = getCurrentInstance()
 const { biz_work_nature, biz_job_status, biz_required_degree_level } = proxy.useDict('biz_work_nature', 'biz_job_status', 'biz_required_degree_level')
@@ -265,13 +304,16 @@ const daterangeRequiredStartDate = ref([])
 const daterangeDeadline = ref([])
 const daterangeCreatedAt = ref([])
 const daterangeUpdatedAt = ref([])
+const jobCategories = ref([])
+const provinces = ref([])
+const cities = ref([])
 
 const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    companyId: null,
+    companyName: null,
     title: null,
     type: null,
     workNature: null,
@@ -280,11 +322,8 @@ const data = reactive({
     status: null,
   },
   rules: {
-    companyId: [
+    companyName: [
       { required: true, message: "公司名称不能为空", trigger: "blur" }
-    ],
-    viewCount: [
-      { required: true, message: "岗位浏览次数不能为空", trigger: "blur" }
     ],
   }
 })
@@ -328,7 +367,7 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    companyId: null,
+    companyName: null,
     department: null,
     title: null,
     type: null,
@@ -348,7 +387,6 @@ function reset() {
     createdAt: null,
     updatedAt: null,
     status: null,
-    viewCount: null,
     postedByUserId: null
   }
   proxy.resetForm("jobsRef")
@@ -390,6 +428,10 @@ function handleUpdate(row) {
   const _id = row.id || ids.value
   getJobs(_id).then(response => {
     form.value = response.data
+    // 如果已有省份ID，加载对应的城市列表
+    if (form.value.provinceId) {
+      handleProvinceChange(form.value.provinceId)
+    }
     open.value = true
     title.value = "修改岗位管理"
   })
@@ -434,5 +476,65 @@ function handleExport() {
   }, `jobs_${new Date().getTime()}.xlsx`)
 }
 
+// 加载岗位类别列表
+function loadJobCategories() {
+  listCategories({}).then(response => {
+    jobCategories.value = response.rows || []
+  })
+}
+
+// 根据岗位类别ID获取名称
+function getCategoryName(categoryId) {
+  if (!categoryId) {
+    return ''
+  }
+  const category = jobCategories.value.find(item => item.id === categoryId)
+  return category ? category.name : ''
+}
+
+// 加载省份列表
+function loadProvinces() {
+  listProvinces({}).then(response => {
+    provinces.value = response.data || []
+  })
+}
+
+// 省份改变时加载城市列表
+function handleProvinceChange(provinceId) {
+  form.value.cityId = null
+  cities.value = []
+  if (provinceId) {
+    listCitiesByProvince(provinceId).then(response => {
+      cities.value = response.data || []
+    })
+  }
+}
+
+// 公司名称搜索
+function queryCompanySearch(queryString, cb) {
+  if (!queryString || queryString.trim() === '') {
+    cb([])
+    return
+  }
+  searchCompanies(queryString).then(response => {
+    const companies = response.data || []
+    const results = companies.map(company => ({
+      value: company.companyName,
+      companyName: company.companyName,
+      companyId: company.companyId
+    }))
+    cb(results)
+  }).catch(() => {
+    cb([])
+  })
+}
+
+// 选择公司
+function handleCompanySelect(item) {
+  form.value.companyName = item.companyName
+}
+
 getList()
+loadJobCategories()
+loadProvinces()
 </script>
