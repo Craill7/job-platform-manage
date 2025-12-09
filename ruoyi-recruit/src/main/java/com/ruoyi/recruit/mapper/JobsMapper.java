@@ -65,4 +65,5 @@ public interface JobsMapper
      * @return 数量
      */
     public int countCurrentRecruitJobs();
+    public List<Jobs> selectJobAuditList(Jobs jobs);
 }
