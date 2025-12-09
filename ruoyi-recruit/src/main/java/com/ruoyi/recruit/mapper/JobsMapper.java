@@ -59,6 +59,10 @@ public interface JobsMapper
      */
     public int deleteJobsByIds(Long[] ids);
 
-    // 在接口中添加方法
-    public List<Jobs> selectJobAuditList(Jobs jobs);
+    /**
+     * 统计未到截止日期的岗位数量
+     * 
+     * @return 数量
+     */
+    public int countCurrentRecruitJobs();
 }

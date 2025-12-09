@@ -58,4 +58,11 @@ public interface ApplicationsMapper
      * @return 结果
      */
     public int deleteApplicationsByIds(Long[] ids);
+
+    /**
+     * 统计投递记录数量
+     * 
+     * @return 数量
+     */
+    public int countApplications();
 }

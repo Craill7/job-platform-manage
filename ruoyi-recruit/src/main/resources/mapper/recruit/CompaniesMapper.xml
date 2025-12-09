@@ -102,4 +102,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{companyId}
         </foreach>
     </delete>
+
+    <select id="countCompanies" resultType="int">
+        select count(1) from companies
+    </select>
 </mapper>

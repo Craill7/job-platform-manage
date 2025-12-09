@@ -88,4 +88,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectLatestEvents" parameterType="Integer" resultMap="EventsResult">
+        <include refid="selectEventsVo"/>
+        order by created_at desc
+        <if test="limit != null and limit > 0">
+            limit #{limit}
+        </if>
+    </select>
 </mapper>

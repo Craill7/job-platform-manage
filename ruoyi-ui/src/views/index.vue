@@ -6,8 +6,7 @@
         <div class="hero-badge">中级实训 · 校企合作</div>
         <h1 class="hero-title">软件工程学院招聘与实践平台</h1>
         <p class="hero-subtitle">
-          面向学院、学生与企业，提供统一的招聘发布与实训活动管理，
-          帮助学生获取优质实践机会，也为企业发现并选拔优秀人才搭建高效渠道。
+          面向学院、学生与企业，提供统一的招聘发布与实训活动管理，帮助学生获取优质实践机会，也为企业发现并选拔优秀人才搭建高效渠道。
         </p>
         <p class="hero-subtitle">
           通过集中管理招聘信息与投递数据，促进
@@ -20,21 +19,20 @@
           <el-tag effect="dark" type="info">企业对接人才</el-tag>
         </div>
         <div class="hero-actions">
-  <el-button type="primary" plain>
-    快速发布招聘
-  </el-button>
+          <el-button type="primary" plain>
+            快速发布招聘
+          </el-button>
 
-  <el-button type="primary" plain @click="goJobAudit">
-    待审核岗位
-    <span class="audit-count">{{ pendingJobCount }}</span>
-  </el-button>
+          <el-button type="primary" plain @click="goJobAudit">
+            待审核岗位
+            <span class="audit-count">{{ pendingJobCount }}</span>
+          </el-button>
 
-  <el-button type="primary" plain @click="goAccountAudit">
-    待审核账号
-    <span class="audit-count">{{ pendingAccountCount }}</span>
-  </el-button>
-</div>
-
+          <el-button type="primary" plain @click="goAccountAudit">
+            待审核账号
+            <span class="audit-count">{{ pendingAccountCount }}</span>
+          </el-button>
+        </div>
 
         <div class="hero-version">
           当前版本：<span>v{{ version }}</span>
@@ -113,30 +111,6 @@
           </ul>
         </el-card>
 
-        <!-- 今日待办 & 公告 -->
-        <el-card shadow="never" class="home-card home-card-margin">
-          <template #header>
-            <div class="card-header">
-              <span>今日待办 & 系统公告</span>
-            </div>
-          </template>
-          <div class="todo-section">
-            <div class="todo-block">
-              <div class="todo-title">今日待办（示例）</div>
-              <ul class="todo-list">
-                <li>· 审核近期企业新增岗位</li>
-                <li>· 导出本周学生投递统计</li>
-                <li>· 发布下一期实训活动预告</li>
-              </ul>
-            </div>
-            <div class="todo-block">
-              <div class="todo-title">系统公告</div>
-              <p class="todo-tip">
-                平台仍处于实训阶段，功能会陆续完善。后续可将此区域接入真实公告接口。
-              </p>
-            </div>
-          </div>
-        </el-card>
       </el-col>
     </el-row>
   </div>
@@ -154,74 +128,58 @@ const version = ref('1.0.0')
 const pendingJobCount = ref(0)
 const pendingAccountCount = ref(0)
 
+/** 最新招聘和活动数据 */
+const timeline = ref([])
+
 /**
- * 这里的接口地址按你的后端改。
- * 假设 GET /recruit/audit/stats 返回：
- * { code: 200, data: { jobPending: 3, accountPending: 7 } }
+ * 获取接口数据
  */
-const fetchAuditStats = async () => {
+const fetchOverviewData = async () => {
   try {
     const res = await request({
-      url: '/recruit/audit/stats', // TODO: 改成你真实统计接口
+      url: '/system/home/overview', // 接口地址
       method: 'get'
     })
     const data = res.data || {}
-    pendingJobCount.value = data.jobPending ?? 0
-    pendingAccountCount.value = data.accountPending ?? 0
+    
+    // 更新待审核数量
+    pendingJobCount.value = data.currentRecruitCount ?? 0
+    pendingAccountCount.value = data.companyCount ?? 0
+
+    // 更新最新动态（招聘活动）
+    timeline.value = data.latestTimeline ?? []
+    
+    // 更新统计卡片
+    statCards.value = [
+      { label: '当前招聘', value: data.currentRecruitCount, desc: '正在进行的岗位数量' },
+      { label: '学生投递', value: data.studentDeliveryCount, desc: '学生已投递简历数量' },
+      { label: '合作企业', value: data.companyCount, desc: '已合作的企业数量' }
+    ]
   } catch (e) {
-    console.error('获取审核统计失败', e)
+    console.error('获取数据失败', e)
   }
 }
 
 /** 跳转到岗位审核页面 */
 const goJobAudit = () => {
-  // TODO: 改成你菜单里“岗位审核”的真实路由 path
   router.push('/audit/job')
 }
 
 /** 跳转到账号审核页面 */
 const goAccountAudit = () => {
-  // TODO: 改成你菜单里“账号审核”的真实路由 path
   router.push('/audit/account')
 }
 
 onMounted(() => {
-  fetchAuditStats()
+  fetchOverviewData()
 })
 
 /** 静态示例统计卡片 */
-const statCards = [
+const statCards = ref([
   { label: '当前招聘', value: 12, desc: '正在进行的岗位数量（示例数据）' },
   { label: '学生投递', value: 86, desc: '系统统计的简历投递次数' },
   { label: '合作企业', value: 18, desc: '已入驻并发布岗位的企业' }
-]
-
-const timeline = [
-  {
-    time: '2025-12-01',
-    title: '2025 校园招聘宣讲会（互联网专场）',
-    desc: '多家互联网企业进校宣讲，面向软件工程相关专业学生。',
-    type: 'primary'
-  },
-  {
-    time: '2025-11-20',
-    title: '企业实训项目启动',
-    desc: '与合作企业共建的线上实训项目开启报名。',
-    type: 'success'
-  },
-  {
-    time: '2025-11-05',
-    title: '双选会报名开启',
-    desc: '学院双选会报名通道开放，企业与学生均可通过平台报名。',
-    type: 'warning'
-  },
-  {
-    time: '2025-10-15',
-    title: '平台版本 v1.0.0 上线',
-    desc: '完成中级实训基础功能开发，进入试运行阶段。',
-    type: 'info'
-  }
-]
+])
 
 const roles = [
   {
@@ -253,6 +211,7 @@ const roles = [
   }
 ]
 </script>
+
 
 <style scoped lang="scss">
 .home {
@@ -547,37 +506,6 @@ const roles = [
     li {
       line-height: 1.7;
     }
-  }
-
-  /* 今日待办 */
-  .todo-section {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .todo-block {
-    padding-bottom: 4px;
-  }
-
-  .todo-title {
-    font-size: 15px;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-
-  .todo-list {
-    margin: 0;
-    padding-left: 0;
-    list-style: none;
-    font-size: 14px;
-    color: #606266;
-  }
-
-  .todo-tip {
-    margin: 0;
-    font-size: 13px;
-    color: #a0a3ad;
   }
 
   /* 动画 */
