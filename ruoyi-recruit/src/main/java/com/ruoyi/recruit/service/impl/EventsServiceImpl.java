@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.recruit.mapper.EventsMapper;
 import com.ruoyi.recruit.domain.Events;
 import com.ruoyi.recruit.service.IEventsService;
+import com.ruoyi.common.utils.SecurityUtils;
 
 /**
  * 求职活动管理Service业务层处理
@@ -52,6 +53,10 @@ public class EventsServiceImpl implements IEventsService
     @Override
     public int insertEvents(Events events)
     {
+        // 如果adminUserId为空，自动设置为当前登录用户ID
+        if (events.getAdminUserId() == null) {
+            events.setAdminUserId(SecurityUtils.getUserId());
+        }
         return eventsMapper.insertEvents(events);
     }
 

@@ -23,8 +23,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="jobId != null "> and job_id = #{jobId}</if>
             <if test="status != null "> and status = #{status}</if>
-            <if test="params.beginSubmittedAt != null and params.beginSubmittedAt != '' and params.endSubmittedAt != null and params.endSubmittedAt != ''"> and submitted_at between #{params.beginSubmittedAt} and #{params.endSubmittedAt}</if>
-            <if test="params.beginUpdatedAt != null and params.beginUpdatedAt != '' and params.endUpdatedAt != null and params.endUpdatedAt != ''"> and updated_at between #{params.beginUpdatedAt} and #{params.endUpdatedAt}</if>
+            <if test="params.beginSubmittedAt != null and params.beginSubmittedAt != '' and params.endSubmittedAt != null and params.endSubmittedAt != ''"> and submitted_at >= #{params.beginSubmittedAt} and submitted_at &lt; DATE_ADD(#{params.endSubmittedAt}, INTERVAL 1 DAY)</if>
+            <if test="params.beginUpdatedAt != null and params.beginUpdatedAt != '' and params.endUpdatedAt != null and params.endUpdatedAt != ''"> and updated_at >= #{params.beginUpdatedAt} and updated_at &lt; DATE_ADD(#{params.endUpdatedAt}, INTERVAL 1 DAY)</if>
         </where>
     </select>
     

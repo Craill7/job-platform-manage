@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -100,5 +101,23 @@ public class JobsController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(jobsService.deleteJobsByIds(ids));
+    }
+
+    /**
+     * 根据职位名称模糊查询职位列表（用于下拉选择）
+     */
+    @GetMapping("/search")
+    public AjaxResult searchJobs(@RequestParam(value = "title", required = false) String title)
+    {
+        Jobs jobs = new Jobs();
+        if (title != null && !title.isEmpty()) {
+            jobs.setTitle(title);
+        }
+        List<Jobs> list = jobsService.selectJobsList(jobs);
+        // 限制返回数量，最多返回10条
+        if (list != null && list.size() > 10) {
+            list = list.subList(0, 10);
+        }
+        return success(list);
     }
 }

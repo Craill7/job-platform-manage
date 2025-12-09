@@ -42,3 +42,12 @@ export function delStudents(userId) {
     method: 'delete'
   })
 }
+
+// 根据学生姓名模糊查询学生列表（用于下拉选择）
+export function searchStudents(fullName) {
+  return request({
+    url: '/recruit/students/search',
+    method: 'get',
+    params: { fullName: fullName }
+  })
+}

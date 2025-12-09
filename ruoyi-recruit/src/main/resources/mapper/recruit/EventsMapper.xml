@@ -25,9 +25,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectEventsVo"/>
         <where>  
             <if test="eventTitle != null  and eventTitle != ''"> and event_title like concat('%', #{eventTitle}, '%')</if>
-            <if test="params.beginEventStartTime != null and params.beginEventStartTime != '' and params.endEventStartTime != null and params.endEventStartTime != ''"> and event_start_time between #{params.beginEventStartTime} and #{params.endEventStartTime}</if>
-            <if test="params.beginEventEndTime != null and params.beginEventEndTime != '' and params.endEventEndTime != null and params.endEventEndTime != ''"> and event_end_time between #{params.beginEventEndTime} and #{params.endEventEndTime}</if>
-            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+            <if test="params.beginEventStartTime != null and params.beginEventStartTime != '' and params.endEventStartTime != null and params.endEventStartTime != ''"> and event_start_time >= #{params.beginEventStartTime} and event_start_time &lt; DATE_ADD(#{params.endEventStartTime}, INTERVAL 1 DAY)</if>
+            <if test="params.beginEventEndTime != null and params.beginEventEndTime != '' and params.endEventEndTime != null and params.endEventEndTime != ''"> and event_end_time >= #{params.beginEventEndTime} and event_end_time &lt; DATE_ADD(#{params.endEventEndTime}, INTERVAL 1 DAY)</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at >= #{params.beginCreatedAt} and created_at &lt; DATE_ADD(#{params.endCreatedAt}, INTERVAL 1 DAY)</if>
         </where>
     </select>
     

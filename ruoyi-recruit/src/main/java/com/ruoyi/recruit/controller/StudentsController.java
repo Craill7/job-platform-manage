@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -100,5 +101,23 @@ public class StudentsController extends BaseController
     public AjaxResult remove(@PathVariable Long[] userIds)
     {
         return toAjax(studentsService.deleteStudentsByUserIds(userIds));
+    }
+
+    /**
+     * 根据学生姓名模糊查询学生列表（用于下拉选择）
+     */
+    @GetMapping("/search")
+    public AjaxResult searchStudents(@RequestParam(value = "fullName", required = false) String fullName)
+    {
+        Students students = new Students();
+        if (fullName != null && !fullName.isEmpty()) {
+            students.setFullName(fullName);
+        }
+        List<Students> list = studentsService.selectStudentsList(students);
+        // 限制返回数量，最多返回10条
+        if (list != null && list.size() > 10) {
+            list = list.subList(0, 10);
+        }
+        return success(list);
     }
 }

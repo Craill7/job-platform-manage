@@ -48,25 +48,6 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="handleAdd"
-          v-hasPermi="['recruit:applications:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['recruit:applications:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="danger"
           plain
           icon="Delete"
@@ -90,8 +71,17 @@
     <el-table v-loading="loading" :data="applicationsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="投递记录ID" align="center" prop="id" />
-      <el-table-column label="投递职位" align="center" prop="jobId" />
-      <el-table-column label="投递人" align="center" prop="studentUserId" />
+      <el-table-column label="投递职位" align="center" prop="jobTitle">
+        <template #default="scope">
+          {{ scope.row.jobTitle || scope.row.jobId }}
+        </template>
+      </el-table-column>
+      <el-table-column label="投递人" align="center" prop="studentName">
+        <template #default="scope">
+          {{ scope.row.studentName || scope.row.studentUserId }}
+        </template>
+      </el-table-column>
+      <el-table-column label="投递人ID" align="center" prop="studentUserId" />
       <el-table-column label="投递状态" align="center" prop="status">
         <template #default="scope">
           <dict-tag :options="biz_application_status" :value="scope.row.status"/>
@@ -109,7 +99,6 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recruit:applications:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['recruit:applications:remove']">删除</el-button>
         </template>
       </el-table-column>
@@ -126,6 +115,71 @@
     <!-- 添加或修改投递记录对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="applicationsRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="投递职位" prop="jobTitle">
+          <el-autocomplete
+            v-model="form.jobTitle"
+            :fetch-suggestions="queryJobSearch"
+            placeholder="请输入职位名称进行搜索"
+            clearable
+            style="width: 100%"
+            @select="handleJobSelect"
+          >
+            <template #default="{ item }">
+              <div>{{ item.title }}</div>
+            </template>
+          </el-autocomplete>
+        </el-form-item>
+        <el-form-item label="投递人" prop="studentName">
+          <el-autocomplete
+            v-model="form.studentName"
+            :fetch-suggestions="queryStudentSearch"
+            placeholder="请输入投递人姓名进行搜索"
+            clearable
+            style="width: 100%"
+            @select="handleStudentSelect"
+            value-key="displayText"
+          >
+            <template #default="{ item }">
+              <div style="line-height: 1.5;">
+                <div style="font-weight: 500;">{{ item.fullName }}</div>
+                <div style="font-size: 12px; color: #909399;">
+                  <span v-if="item.studentId">学号：{{ item.studentId }}</span>
+                  <span v-if="item.studentId && item.phoneNumber"> | </span>
+                  <span v-if="item.phoneNumber">电话：{{ item.phoneNumber }}</span>
+                </div>
+              </div>
+            </template>
+          </el-autocomplete>
+        </el-form-item>
+        <el-form-item label="简历" prop="resumeId">
+          <el-input v-model="form.resumeId" placeholder="请输入简历" />
+        </el-form-item>
+        <el-form-item label="投递状态" prop="status">
+          <el-select v-model="form.status" placeholder="请选择投递状态">
+            <el-option
+              v-for="dict in biz_application_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="投递时间" prop="submittedAt">
+          <el-date-picker clearable
+            v-model="form.submittedAt"
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择投递时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="状态更新时间" prop="updatedAt">
+          <el-date-picker clearable
+            v-model="form.updatedAt"
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择状态更新时间">
+          </el-date-picker>
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -139,6 +193,8 @@
 
 <script setup name="Applications">
 import { listApplications, getApplications, delApplications, addApplications, updateApplications } from "@/api/recruit/applications"
+import { searchJobs } from "@/api/recruit/jobs"
+import { searchStudents } from "@/api/recruit/students"
 
 const { proxy } = getCurrentInstance()
 const { biz_application_status } = proxy.useDict('biz_application_status')
@@ -166,10 +222,10 @@ const data = reactive({
     updatedAt: null
   },
   rules: {
-    jobId: [
+    jobTitle: [
       { required: true, message: "投递职位不能为空", trigger: "blur" }
     ],
-    studentUserId: [
+    studentName: [
       { required: true, message: "投递人不能为空", trigger: "blur" }
     ],
     resumeId: [
@@ -219,7 +275,9 @@ function reset() {
   form.value = {
     id: null,
     jobId: null,
+    jobTitle: null,
     studentUserId: null,
+    studentName: null,
     resumeId: null,
     status: null,
     submittedAt: null,
@@ -262,6 +320,10 @@ function handleUpdate(row) {
   const _id = row.id || ids.value
   getApplications(_id).then(response => {
     form.value = response.data
+    // 如果已有jobId但没有jobTitle，需要填充
+    if (form.value.jobId && !form.value.jobTitle) {
+      // jobTitle应该已经在后端填充了
+    }
     open.value = true
     title.value = "修改投递记录"
   })
@@ -271,21 +333,93 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["applicationsRef"].validate(valid => {
     if (valid) {
+      // 提交时发送jobTitle，后端会根据jobTitle查找jobId
+      const submitData = { ...form.value }
+      // 如果用户选择了下拉框中的选项，jobId已经设置；如果没有选择，后端会根据jobTitle查找
+      // 提交时保留jobTitle，后端会处理转换
+      
       if (form.value.id != null) {
-        updateApplications(form.value).then(response => {
+        updateApplications(submitData).then(response => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
           getList()
+        }).catch(error => {
+          proxy.$modal.msgError(error.msg || "修改失败")
         })
       } else {
-        addApplications(form.value).then(response => {
+        addApplications(submitData).then(response => {
           proxy.$modal.msgSuccess("新增成功")
           open.value = false
           getList()
+        }).catch(error => {
+          proxy.$modal.msgError(error.msg || "新增失败")
         })
       }
     }
   })
+}
+
+// 职位名称搜索
+function queryJobSearch(queryString, cb) {
+  if (!queryString || queryString.trim() === '') {
+    cb([])
+    return
+  }
+  searchJobs(queryString).then(response => {
+    const jobs = response.data || []
+    const results = jobs.map(job => ({
+      value: job.title,
+      title: job.title,
+      jobId: job.id
+    }))
+    cb(results)
+  }).catch(() => {
+    cb([])
+  })
+}
+
+// 选择职位
+function handleJobSelect(item) {
+  form.value.jobTitle = item.title
+  form.value.jobId = item.jobId
+}
+
+// 投递人姓名搜索
+function queryStudentSearch(queryString, cb) {
+  if (!queryString || queryString.trim() === '') {
+    cb([])
+    return
+  }
+  searchStudents(queryString).then(response => {
+    const students = response.data || []
+    const results = students.map(student => {
+      // 构建显示文本，包含姓名、学号、电话等信息以便区分重名学生
+      let displayText = student.fullName || ''
+      if (student.studentId) {
+        displayText += ` (学号: ${student.studentId})`
+      }
+      if (student.phoneNumber) {
+        displayText += ` - ${student.phoneNumber}`
+      }
+      return {
+        value: displayText,
+        displayText: displayText,
+        fullName: student.fullName,
+        userId: student.userId,
+        studentId: student.studentId,
+        phoneNumber: student.phoneNumber
+      }
+    })
+    cb(results)
+  }).catch(() => {
+    cb([])
+  })
+}
+
+// 选择投递人
+function handleStudentSelect(item) {
+  form.value.studentName = item.fullName
+  form.value.studentUserId = item.userId
 }
 
 /** 删除按钮操作 */

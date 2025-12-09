@@ -25,9 +25,15 @@ public class Applications extends BaseEntity
     @Excel(name = "投递职位")
     private Long jobId;
 
+    /** 职位名称（用于显示，通过jobId关联查询获得） */
+    private String jobTitle;
+
     /** 投递人 */
     @Excel(name = "投递人")
     private Long studentUserId;
+
+    /** 投递人姓名（用于显示，通过studentUserId关联查询获得） */
+    private String studentName;
 
     /** 简历 */
     private Long resumeId;
@@ -66,6 +72,16 @@ public class Applications extends BaseEntity
         return jobId;
     }
 
+    public void setJobTitle(String jobTitle) 
+    {
+        this.jobTitle = jobTitle;
+    }
+
+    public String getJobTitle() 
+    {
+        return jobTitle;
+    }
+
     public void setStudentUserId(Long studentUserId) 
     {
         this.studentUserId = studentUserId;
@@ -74,6 +90,16 @@ public class Applications extends BaseEntity
     public Long getStudentUserId() 
     {
         return studentUserId;
+    }
+
+    public void setStudentName(String studentName) 
+    {
+        this.studentName = studentName;
+    }
+
+    public String getStudentName() 
+    {
+        return studentName;
     }
 
     public void setResumeId(Long resumeId) 
@@ -121,7 +147,9 @@ public class Applications extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("jobId", getJobId())
+            .append("jobTitle", getJobTitle())
             .append("studentUserId", getStudentUserId())
+            .append("studentName", getStudentName())
             .append("resumeId", getResumeId())
             .append("status", getStatus())
             .append("submittedAt", getSubmittedAt())

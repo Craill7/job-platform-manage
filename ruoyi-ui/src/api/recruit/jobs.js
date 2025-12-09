@@ -42,3 +42,12 @@ export function delJobs(id) {
     method: 'delete'
   })
 }
+
+// 根据职位名称模糊查询职位列表（用于下拉选择）
+export function searchJobs(title) {
+  return request({
+    url: '/recruit/jobs/search',
+    method: 'get',
+    params: { title: title }
+  })
+}

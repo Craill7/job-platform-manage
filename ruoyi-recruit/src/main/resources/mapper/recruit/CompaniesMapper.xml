@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="industryId != null "> and industry_id = #{industryId}</if>
             <if test="natureId != null "> and nature_id = #{natureId}</if>
             <if test="companyScaleId != null "> and company_scale_id = #{companyScaleId}</if>
-            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at >= #{params.beginCreatedAt} and created_at &lt; DATE_ADD(#{params.endCreatedAt}, INTERVAL 1 DAY)</if>
         </where>
     </select>
     
