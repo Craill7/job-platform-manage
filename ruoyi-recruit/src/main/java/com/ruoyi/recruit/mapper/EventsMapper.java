@@ -58,4 +58,12 @@ public interface EventsMapper
      * @return 结果
      */
     public int deleteEventsByIds(Long[] ids);
+
+    /**
+     * 查询最新的活动列表（用于时间轴）
+     * 
+     * @param limit 限制数量
+     * @return 活动列表
+     */
+    public List<Events> selectLatestEvents(Integer limit);
 }

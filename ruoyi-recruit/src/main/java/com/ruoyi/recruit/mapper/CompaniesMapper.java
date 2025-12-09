@@ -66,4 +66,11 @@ public interface CompaniesMapper
      * @return 结果
      */
     public int deleteCompaniesByCompanyIds(Long[] companyIds);
+
+    /**
+     * 统计企业数量
+     * 
+     * @return 数量
+     */
+    public int countCompanies();
 }

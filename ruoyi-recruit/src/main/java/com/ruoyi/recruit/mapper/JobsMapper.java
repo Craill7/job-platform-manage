@@ -58,4 +58,11 @@ public interface JobsMapper
      * @return 结果
      */
     public int deleteJobsByIds(Long[] ids);
+
+    /**
+     * 统计未到截止日期的岗位数量
+     * 
+     * @return 数量
+     */
+    public int countCurrentRecruitJobs();
 }
