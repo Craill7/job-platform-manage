@@ -58,4 +58,28 @@ public interface IJobsService
      * @return 结果
      */
     public int deleteJobsById(Long id);
+
+    /**
+     * 查询岗位审核列表
+     */
+    List<Jobs> selectJobAuditList(Jobs jobs);
+
+    /**
+     * 审核岗位
+     * @param jobId 岗位ID
+     * @param status 目标状态 (20=通过, 30=拒绝)
+     * @param remark 审核备注
+     * @param operatorId 操作人ID
+     * @param operatorContact 操作人联系方式
+     */
+    public void auditJob(Long jobId, Integer status, String remark, Long operatorId, String operatorContact);
+    /**
+     * 批量审核岗位
+     * * @param jobIds 岗位ID列表
+     * @param status 目标状态
+     * @param remark 备注
+     * @param operatorId 操作人ID
+     * @param operatorContact 操作人联系方式
+     */
+    public void batchAuditJobs(List<Long> jobIds, Integer status, String remark, Long operatorId, String operatorContact);
 }

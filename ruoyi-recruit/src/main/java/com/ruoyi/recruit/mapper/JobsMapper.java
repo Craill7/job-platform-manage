@@ -58,4 +58,7 @@ public interface JobsMapper
      * @return 结果
      */
     public int deleteJobsByIds(Long[] ids);
+
+    // 在接口中添加方法
+    public List<Jobs> selectJobAuditList(Jobs jobs);
 }

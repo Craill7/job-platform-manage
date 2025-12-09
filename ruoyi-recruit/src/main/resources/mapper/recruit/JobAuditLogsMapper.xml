@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.recruit.mapper.JobAuditLogsMapper">
+
+    <resultMap type="JobAuditLogs" id="JobAuditLogsResult">
+        <result property="id"    column="id"    />
+        <result property="jobId"    column="job_id"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="operatorContact"    column="operator_contact"    />
+        <result property="auditStatus"    column="audit_status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectJobAuditLogsVo">
+        select id, job_id, operator_id, operator_contact, audit_status, remark, created_at from job_audit_logs
+    </sql>
+
+    <select id="selectJobAuditLogsList" parameterType="JobAuditLogs" resultMap="JobAuditLogsResult">
+        <include refid="selectJobAuditLogsVo"/>
+        <where>
+            <if test="jobId != null "> and job_id = #{jobId}</if>
+            <if test="operatorId != null "> and operator_id = #{operatorId}</if>
+            <if test="auditStatus != null "> and audit_status = #{auditStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectJobAuditLogsById" parameterType="Long" resultMap="JobAuditLogsResult">
+        <include refid="selectJobAuditLogsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertJobAuditLogs" parameterType="JobAuditLogs" useGeneratedKeys="true" keyProperty="id">
+        insert into job_audit_logs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobId != null">job_id,</if>
+            <if test="operatorId != null">operator_id,</if>
+            <if test="operatorContact != null">operator_contact,</if>
+            <if test="auditStatus != null">audit_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createdAt != null">created_at,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobId != null">#{jobId},</if>
+            <if test="operatorId != null">#{operatorId},</if>
+            <if test="operatorContact != null">#{operatorContact},</if>
+            <if test="auditStatus != null">#{auditStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+        </trim>
+    </insert>
+
+    <update id="updateJobAuditLogs" parameterType="JobAuditLogs">
+        update job_audit_logs
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="jobId != null">job_id = #{jobId},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="operatorContact != null">operator_contact = #{operatorContact},</if>
+            <if test="auditStatus != null">audit_status = #{auditStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteJobAuditLogsById" parameterType="Long">
+        delete from job_audit_logs where id = #{id}
+    </delete>
+
+    <delete id="deleteJobAuditLogsByIds" parameterType="String">
+        delete from job_audit_logs where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

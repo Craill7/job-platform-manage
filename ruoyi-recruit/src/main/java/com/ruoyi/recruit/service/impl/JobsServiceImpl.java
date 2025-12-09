@@ -1,18 +1,19 @@
 package com.ruoyi.recruit.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.recruit.domain.*;
+import com.ruoyi.recruit.mapper.JobAuditLogsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.recruit.mapper.JobsMapper;
-import com.ruoyi.recruit.domain.Jobs;
-import com.ruoyi.recruit.domain.Companies;
 import com.ruoyi.recruit.service.IJobsService;
 import com.ruoyi.recruit.service.ICompaniesService;
 import com.ruoyi.recruit.service.ITProvincesService;
 import com.ruoyi.recruit.service.ITCitiesService;
-import com.ruoyi.recruit.domain.TProvinces;
-import com.ruoyi.recruit.domain.TCities;
 import com.ruoyi.common.utils.SecurityUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 岗位管理Service业务层处理
@@ -21,7 +22,7 @@ import com.ruoyi.common.utils.SecurityUtils;
  * @date 2025-12-01
  */
 @Service
-public class JobsServiceImpl implements IJobsService 
+public class JobsServiceImpl implements IJobsService
 {
     @Autowired
     private JobsMapper jobsMapper;
@@ -34,6 +35,9 @@ public class JobsServiceImpl implements IJobsService
 
     @Autowired
     private ITCitiesService tCitiesService;
+
+    @Autowired
+    private JobAuditLogsMapper jobAuditLogsMapper;
 
     /**
      * 查询岗位管理
@@ -69,6 +73,61 @@ public class JobsServiceImpl implements IJobsService
             }
         }
         return jobsList;
+    }
+    /**
+     * 查询岗位审核列表 (关联查询公司名称)
+     *
+     * * @param jobs 查询条件
+     * @return 岗位列表
+     */
+    @Override
+    public List<Jobs> selectJobAuditList(Jobs jobs) {
+        // 使用专门的审核列表查询方法，XML中需包含关联查询逻辑
+        return jobsMapper.selectJobAuditList(jobs);
+    }
+
+    /**
+     * 审核岗位 (更新状态 + 记录日志)
+     *
+     * * @param jobId 岗位ID
+     * @param status 目标状态 (20=通过, 30=拒绝)
+     * @param remark 审核备注
+     * @param operatorId 操作人ID
+     */
+    @Override
+    @Transactional
+    public void auditJob(Long jobId, Integer status, String remark, Long operatorId,String operatorContact) {
+        // 1. 更新岗位状态
+        Jobs job = new Jobs();
+        job.setId(jobId); // 确保类型匹配，数据库为 int
+        job.setStatus(status.longValue());
+        jobsMapper.updateJobs(job);
+
+        // 2. 插入审核日志
+        JobAuditLogs auditLog = new JobAuditLogs();
+        auditLog.setJobId(jobId.intValue());
+        auditLog.setOperatorId(operatorId);
+        auditLog.setAuditStatus(status);
+        auditLog.setRemark(remark);
+        auditLog.setOperatorContact(operatorContact);
+        auditLog.setCreatedAt(DateUtils.getNowDate());
+        jobAuditLogsMapper.insertJobAuditLogs(auditLog);
+    }
+
+    /**
+     * 批量审核岗位
+     * * @param jobIds 岗位ID列表
+     * @param status 目标状态
+     * @param remark 备注
+     * @param operatorId 操作人ID
+     */
+    @Override
+    @Transactional
+    public void batchAuditJobs(List<Long> jobIds, Integer status, String remark, Long operatorId,String operatorContact) {
+        for (Long jobId : jobIds) {
+            // 复用单条审核逻辑，确保每条都写入日志
+            this.auditJob(jobId, status, remark, operatorId,operatorContact);
+        }
     }
 
     /**
@@ -196,4 +255,9 @@ public class JobsServiceImpl implements IJobsService
     {
         return jobsMapper.deleteJobsById(id);
     }
+
+
+
 }
+
+

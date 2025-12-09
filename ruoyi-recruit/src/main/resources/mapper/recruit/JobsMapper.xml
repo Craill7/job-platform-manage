@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="Jobs" id="JobsResult">
         <result property="id"    column="id"    />
         <result property="companyId"    column="company_id"    />
+        <result property="companyName"    column="company_name"    />
         <result property="department"    column="department"    />
         <result property="title"    column="title"    />
         <result property="type"    column="type"    />
@@ -54,6 +55,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectJobsById" parameterType="Long" resultMap="JobsResult">
         <include refid="selectJobsVo"/>
         where j.id = #{id}
+    </select>
+
+    <select id="selectJobAuditList" parameterType="Jobs" resultMap="JobsResult">
+        SELECT j.id, j.company_id, j.title, j.description, j.min_salary, j.max_salary,
+        j.work_nature, j.status, j.created_at, j.deadline, j.headcount,
+        c.company_name
+        FROM jobs j
+        LEFT JOIN companies c ON j.company_id = c.company_id
+        <where>
+            <if test="status != null">
+                AND j.status = #{status}
+            </if>
+            <if test="title != null and title != ''">
+                AND j.title LIKE concat('%', #{title}, '%')
+            </if>
+            <if test="companyName != null and companyName != ''">
+                AND c.company_name LIKE concat('%', #{companyName}, '%')
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''">
+                AND j.created_at &gt;= #{params.beginTime}
+            </if>
+            <if test="params.endTime != null and params.endTime != ''">
+                AND j.created_at &lt;= #{params.endTime}
+            </if>
+        </where>
+        ORDER BY j.created_at DESC
     </select>
 
     <insert id="insertJobs" parameterType="Jobs" useGeneratedKeys="true" keyProperty="id">

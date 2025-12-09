@@ -88,17 +88,26 @@ public class Jobs extends BaseEntity
     private Date requiredStartDate;
 
     /** 招聘截止日期 */
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date deadline;
 
+
     /** 创建时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createdAt;
 
     /** 更新时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updatedAt;
 
     /** 岗位状态 */
     @Excel(name = "岗位状态")
     private Long status;
+
+
+
+    /** 审核备注 (接收前端参数用) */
+    private String auditRemark;
 
     /** 岗位浏览次数 */
     @Excel(name = "岗位浏览次数")
@@ -366,6 +375,9 @@ public class Jobs extends BaseEntity
     {
         return postedByUserId;
     }
+
+    public String getAuditRemark() { return auditRemark; }
+    public void setAuditRemark(String auditRemark) { this.auditRemark = auditRemark; }
 
     @Override
     public String toString() {
