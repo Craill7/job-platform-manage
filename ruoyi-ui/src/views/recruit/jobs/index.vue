@@ -18,7 +18,7 @@
         />
       </el-form-item>
       <el-form-item label="岗位性质" prop="workNature">
-        <el-select v-model="queryParams.workNature" placeholder="请选择岗位性质" clearable>
+        <el-select v-model="queryParams.workNature" placeholder="请选择岗位性质" clearable  filterable>
           <el-option
             v-for="dict in biz_work_nature"
             :key="dict.value"
@@ -28,7 +28,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="学历要求" prop="requiredDegree">
-        <el-select v-model="queryParams.requiredDegree" placeholder="请选择学历要求" clearable>
+        <el-select v-model="queryParams.requiredDegree" placeholder="请选择学历要求" clearable filterable>
           <el-option
             v-for="dict in biz_required_degree_level"
             :key="dict.value"
@@ -48,7 +48,7 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="岗位状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择岗位状态" clearable>
+        <el-select v-model="queryParams.status" placeholder="请选择岗位状态" clearable filterable>
           <el-option
             v-for="dict in biz_job_status"
             :key="dict.value"
@@ -192,10 +192,10 @@
         <el-form-item label="岗位加分项" prop="bonusPoints">
           <el-input v-model="form.bonusPoints" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="最少薪资(k)" prop="minSalary">
+        <el-form-item label="最少薪资(校招k/实习￥)" prop="minSalary">
           <el-input v-model="form.minSalary" placeholder="请输入最少薪资(k)" />
         </el-form-item>
-        <el-form-item label="最多薪资(k)" prop="maxSalary">
+        <el-form-item label="最多薪资(校招k/实习￥)" prop="maxSalary">
           <el-input v-model="form.maxSalary" placeholder="请输入最多薪资(k)" />
         </el-form-item>
         <el-form-item label="省份" prop="provinceId">

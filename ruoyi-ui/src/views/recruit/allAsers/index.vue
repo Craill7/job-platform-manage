@@ -18,7 +18,7 @@
         />
       </el-form-item>
       <el-form-item label="用户角色" prop="role">
-        <el-select v-model="queryParams.role" placeholder="请选择用户角色" clearable>
+        <el-select v-model="queryParams.role" placeholder="请选择用户角色" clearable filterable>
           <el-option
             v-for="dict in biz_user_role"
             :key="dict.value"
@@ -28,7 +28,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="账户状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择账户状态" clearable>
+        <el-select v-model="queryParams.status" placeholder="请选择账户状态" clearable filterable>
           <el-option
             v-for="dict in biz_user_status"
             :key="dict.value"

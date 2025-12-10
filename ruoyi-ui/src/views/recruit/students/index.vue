@@ -18,7 +18,7 @@
         />
       </el-form-item>
       <el-form-item label="求职状态" prop="jobSeekingStatus">
-        <el-select v-model="queryParams.jobSeekingStatus" placeholder="请选择求职状态" clearable>
+        <el-select v-model="queryParams.jobSeekingStatus" placeholder="请选择求职状态" clearable filterable>
           <el-option
             v-for="dict in biz_seek_status"
             :key="dict.value"

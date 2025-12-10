@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="活动标题" prop="eventTitle">
         <el-input
           v-model="queryParams.eventTitle"
@@ -19,6 +19,7 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
+      
       <el-form-item label="活动结束时间" style="width: 308px">
         <el-date-picker
           v-model="daterangeEventEndTime"
@@ -96,6 +97,7 @@
           <span>{{ parseTime(scope.row.eventStartTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      
       <el-table-column label="活动结束时间" align="center" prop="eventEndTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.eventEndTime, '{y}-{m}-{d}') }}</span>
@@ -146,6 +148,7 @@
             placeholder="请选择活动开始时间">
           </el-date-picker>
         </el-form-item>
+        
         <el-form-item label="活动结束时间" prop="eventEndTime">
           <el-date-picker clearable
             v-model="form.eventEndTime"

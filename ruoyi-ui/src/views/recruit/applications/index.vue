@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="投递职位" prop="jobId">
         <el-input
           v-model="queryParams.jobId"
@@ -10,7 +10,7 @@
         />
       </el-form-item>
       <el-form-item label="投递状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择投递状态" clearable>
+        <el-select v-model="queryParams.status" placeholder="请选择投递状态" clearable filterable>
           <el-option
             v-for="dict in biz_application_status"
             :key="dict.value"
@@ -160,7 +160,7 @@
               v-for="dict in biz_application_status"
               :key="dict.value"
               :label="dict.label"
-              :value="parseInt(dict.value)"
+              :value="dict.value"
             ></el-option>
           </el-select>
         </el-form-item>
