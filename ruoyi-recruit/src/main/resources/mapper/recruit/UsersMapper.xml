@@ -15,6 +15,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="lastLoginAt"    column="last_login_at"    />
     </resultMap>
 
+    <resultMap type="com.ruoyi.recruit.domain.CompanyAudit" id="CompanyAuditResult">
+        <result property="userId"       column="id"    />
+        <result property="email"        column="email"    />
+        <result property="role"         column="role"    />
+        <result property="status"       column="status"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="companyName"  column="company_name"    />
+        <result property="auditedAt"    column="audited_at"    />
+    </resultMap>
+
     <sql id="selectUsersVo">
         select id, email, password_hash, role, status, created_at, updated_at, last_login_at from users
     </sql>
@@ -33,6 +43,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectUsersById" parameterType="Long" resultMap="UsersResult">
         <include refid="selectUsersVo"/>
         where id = #{id}
+    </select>
+
+    <select id="selectCompanyAuditList" parameterType="com.ruoyi.recruit.domain.Users" resultMap="CompanyAuditResult">
+        SELECT
+        u.id,
+        u.email,
+        u.role,
+        u.status,
+        u.created_at,
+        c.company_name,
+        CASE WHEN u.status = 0 THEN NULL ELSE u.updated_at END as audited_at
+        FROM users u
+        LEFT JOIN companies c ON u.id = c.user_id
+        <where>
+            AND u.role = 2  <if test="email != null and email != ''">
+            AND u.email LIKE concat('%', #{email}, '%')
+        </if>
+            <if test="status != null">
+                AND u.status = #{status}
+            </if>
+            <if test="params.companyName != null and params.companyName != ''">
+                AND c.company_name LIKE concat('%', #{params.companyName}, '%')
+            </if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != ''">
+                AND u.created_at &gt;= #{params.beginCreatedAt}
+            </if>
+            <if test="params.endCreatedAt != null and params.endCreatedAt != ''">
+                AND u.created_at &lt;= #{params.endCreatedAt}
+            </if>
+        </where>
+        ORDER BY u.created_at DESC
+    </select>
+
+    <select id="selectCompanyAuditById" parameterType="Long" resultMap="CompanyAuditResult">
+        SELECT
+            u.id, u.email, u.role, u.status, u.created_at,
+            c.company_name,
+            CASE WHEN u.status = 0 THEN NULL ELSE u.updated_at END as audited_at
+        FROM users u
+                 LEFT JOIN companies c ON u.id = c.user_id
+        WHERE u.id = #{id}
     </select>
 
     <insert id="insertUsers" parameterType="Users" useGeneratedKeys="true" keyProperty="id">

@@ -1,11 +1,14 @@
 package com.ruoyi.recruit.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.recruit.domain.CompanyAudit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.recruit.mapper.UsersMapper;
 import com.ruoyi.recruit.domain.Users;
 import com.ruoyi.recruit.service.IUsersService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 账号管理Service业务层处理
@@ -89,5 +92,31 @@ public class UsersServiceImpl implements IUsersService
     public int deleteUsersById(Long id)
     {
         return usersMapper.deleteUsersById(id);
+    }
+
+    @Override
+    public List<CompanyAudit> selectCompanyAuditList(Users users) {
+        return usersMapper.selectCompanyAuditList(users);
+    }
+
+    @Override
+    public CompanyAudit selectCompanyAuditById(Long id) {
+        return usersMapper.selectCompanyAuditById(id);
+    }
+
+    @Override
+    public int updateUserStatus(Long userId, Integer status) {
+        Users user = new Users();
+        user.setId(userId);
+        user.setStatus(status.longValue());
+        return usersMapper.updateUsers(user);
+    }
+
+    @Override
+    @Transactional
+    public void batchAuditUsers(List<Long> userIds, Integer status) {
+        for (Long id : userIds) {
+            updateUserStatus(id, status);
+        }
     }
 }

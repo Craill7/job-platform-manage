@@ -1,6 +1,8 @@
 package com.ruoyi.recruit.service;
 
 import java.util.List;
+
+import com.ruoyi.recruit.domain.CompanyAudit;
 import com.ruoyi.recruit.domain.Users;
 
 /**
@@ -58,4 +60,17 @@ public interface IUsersService
      * @return 结果
      */
     public int deleteUsersById(Long id);
+
+    /** 查询企业审核列表 */
+    public List<CompanyAudit> selectCompanyAuditList(Users users);
+
+    /** 查询详情 */
+    public CompanyAudit selectCompanyAuditById(Long id);
+
+    /** 审核用户状态 */
+    public int updateUserStatus(Long userId, Integer status);
+
+    /** 批量审核用户 */
+    public void batchAuditUsers(List<Long> userIds, Integer status);
+
 }

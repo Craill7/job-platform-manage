@@ -1,6 +1,8 @@
 package com.ruoyi.recruit.mapper;
 
 import java.util.List;
+
+import com.ruoyi.recruit.domain.CompanyAudit;
 import com.ruoyi.recruit.domain.Users;
 
 /**
@@ -58,4 +60,11 @@ public interface UsersMapper
      * @return 结果
      */
     public int deleteUsersByIds(Long[] ids);
+    /** 查询企业审核列表 (返回 VO) */
+    public List<CompanyAudit> selectCompanyAuditList(Users users);
+
+    /** 查询企业审核详情 (返回 VO) */
+    public CompanyAudit selectCompanyAuditById(Long id);
+
+
 }
