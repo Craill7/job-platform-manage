@@ -117,7 +117,7 @@
         </template>
       </el-table-column>
       <el-table-column label="最少薪资(k/元)" align="center" prop="minSalary" />
-      <el-table-column label="最多薪资(k/元)="center" prop="maxSalary" />   
+      <el-table-column label="最多薪资(k/元)="align="center" prop="maxSalary" />
       <el-table-column label="岗位性质" align="center" prop="workNature">
         <template #default="scope">
           <dict-tag :options="biz_work_nature" :value="scope.row.workNature"/>
