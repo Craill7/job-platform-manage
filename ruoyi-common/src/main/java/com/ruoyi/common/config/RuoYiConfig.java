@@ -119,4 +119,20 @@ public class RuoYiConfig
     {
         return getProfile() + "/upload";
     }
+
+    /**
+     * 获取学生头像上传路径
+     */
+    public static String getStudentAvatarPath()
+    {
+        return "D:/job-platform-back/uploads/student-avatar";
+    }
+
+    /**
+     * 获取公司Logo上传路径
+     */
+    public static String getCompanyLogoPath()
+    {
+        return "D:/job-platform-back/uploads/company-logo";
+    }
 }

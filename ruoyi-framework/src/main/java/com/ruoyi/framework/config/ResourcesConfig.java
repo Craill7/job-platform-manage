@@ -33,6 +33,14 @@ public class ResourcesConfig implements WebMvcConfigurer
         registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**")
                 .addResourceLocations("file:" + RuoYiConfig.getProfile() + "/");
 
+        /** 学生头像访问路径 */
+        registry.addResourceHandler("/files/student-avatar/**")
+                .addResourceLocations("file:D:/job-platform-back/uploads/student-avatar/");
+
+        /** 公司Logo访问路径 */
+        registry.addResourceHandler("/files/company-logo/**")
+                .addResourceLocations("file:D:/job-platform-back/uploads/company-logo/");
+
         /** swagger配置 */
         registry.addResourceHandler("/swagger-ui/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")

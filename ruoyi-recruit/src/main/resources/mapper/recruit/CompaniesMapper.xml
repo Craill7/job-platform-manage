@@ -13,6 +13,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="industryId"    column="industry_id"    />
         <result property="natureId"    column="nature_id"    />
         <result property="companyScaleId"    column="company_scale_id"    />
+        <result property="industryName"    column="industry_name"    />
+        <result property="natureName"    column="nature_name"    />
+        <result property="companyScaleName"    column="company_scale_name"    />
         <result property="companyAddress"    column="company_address"    />
         <result property="contactPersonName"    column="contact_person_name"    />
         <result property="contactPersonPhone"    column="contact_person_phone"    />
@@ -20,28 +23,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectCompaniesVo">
-        select company_id, user_id, company_name, description, logo_url, industry_id, nature_id, company_scale_id, company_address, contact_person_name, contact_person_phone, created_at from companies
+        select c.company_id, c.user_id, c.company_name, c.description, c.logo_url, c.industry_id, c.nature_id, c.company_scale_id, 
+               c.company_address, c.contact_person_name, c.contact_person_phone, c.created_at,
+               ti.name as industry_name, 
+               tcn.name as nature_name, 
+               tcs.scale as company_scale_name
+        from companies c
+        left join t_industries ti on c.industry_id = ti.id
+        left join t_company_natures tcn on c.nature_id = tcn.id
+        left join t_company_scales tcs on c.company_scale_id = tcs.id
     </sql>
 
     <select id="selectCompaniesList" parameterType="Companies" resultMap="CompaniesResult">
         <include refid="selectCompaniesVo"/>
         <where>  
-            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
-            <if test="industryId != null "> and industry_id = #{industryId}</if>
-            <if test="natureId != null "> and nature_id = #{natureId}</if>
-            <if test="companyScaleId != null "> and company_scale_id = #{companyScaleId}</if>
-            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at >= #{params.beginCreatedAt} and created_at &lt; DATE_ADD(#{params.endCreatedAt}, INTERVAL 1 DAY)</if>
+            <if test="companyName != null  and companyName != ''"> and c.company_name like concat('%', #{companyName}, '%')</if>
+            <if test="industryId != null "> and c.industry_id = #{industryId}</if>
+            <if test="natureId != null "> and c.nature_id = #{natureId}</if>
+            <if test="companyScaleId != null "> and c.company_scale_id = #{companyScaleId}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and c.created_at >= #{params.beginCreatedAt} and c.created_at &lt; DATE_ADD(#{params.endCreatedAt}, INTERVAL 1 DAY)</if>
         </where>
     </select>
     
     <select id="selectCompaniesByCompanyId" parameterType="Long" resultMap="CompaniesResult">
         <include refid="selectCompaniesVo"/>
-        where company_id = #{companyId}
+        where c.company_id = #{companyId}
     </select>
 
     <select id="selectCompaniesByCompanyName" parameterType="String" resultMap="CompaniesResult">
         <include refid="selectCompaniesVo"/>
-        where company_name = #{companyName}
+        where c.company_name = #{companyName}
     </select>
 
     <insert id="insertCompanies" parameterType="Companies" useGeneratedKeys="true" keyProperty="companyId">

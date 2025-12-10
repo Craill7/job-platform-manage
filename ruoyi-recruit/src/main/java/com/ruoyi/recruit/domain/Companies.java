@@ -47,6 +47,15 @@ public class Companies extends BaseEntity
     @Excel(name = "公司规模")
     private Long companyScaleId;
 
+    /** 行业领域名称 */
+    private String industryName;
+
+    /** 企业性质名称 */
+    private String natureName;
+
+    /** 公司规模名称 */
+    private String companyScaleName;
+
     /** 公司地址 */
     private String companyAddress;
 
@@ -143,6 +152,36 @@ public class Companies extends BaseEntity
         return companyScaleId;
     }
 
+    public void setIndustryName(String industryName) 
+    {
+        this.industryName = industryName;
+    }
+
+    public String getIndustryName() 
+    {
+        return industryName;
+    }
+
+    public void setNatureName(String natureName) 
+    {
+        this.natureName = natureName;
+    }
+
+    public String getNatureName() 
+    {
+        return natureName;
+    }
+
+    public void setCompanyScaleName(String companyScaleName) 
+    {
+        this.companyScaleName = companyScaleName;
+    }
+
+    public String getCompanyScaleName() 
+    {
+        return companyScaleName;
+    }
+
     public void setCompanyAddress(String companyAddress) 
     {
         this.companyAddress = companyAddress;
@@ -194,6 +233,9 @@ public class Companies extends BaseEntity
             .append("industryId", getIndustryId())
             .append("natureId", getNatureId())
             .append("companyScaleId", getCompanyScaleId())
+            .append("industryName", getIndustryName())
+            .append("natureName", getNatureName())
+            .append("companyScaleName", getCompanyScaleName())
             .append("companyAddress", getCompanyAddress())
             .append("contactPersonName", getContactPersonName())
             .append("contactPersonPhone", getContactPersonPhone())
