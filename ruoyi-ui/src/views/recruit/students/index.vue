@@ -41,6 +41,7 @@
           icon="Plus"
           @click="handleAdd"
           v-hasPermi="['recruit:students:add']"
+          style="display: none;"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -116,8 +117,11 @@
     <!-- 添加或修改学生信息管理对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="studentsRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="用户ID" prop="userId">
+          <el-input v-model="form.userId" placeholder="请输入用户ID" :disabled="title === '修改学生信息管理'" />
+        </el-form-item>
         <el-form-item label="头像" prop="avatarUrl">
-          <image-upload v-model="form.avatarUrl"/>
+          <image-upload v-model="form.avatarUrl" action="/recruit/students/avatar"/>
         </el-form-item>
         <el-form-item label="姓名" prop="fullName">
           <el-input v-model="form.fullName" placeholder="请输入姓名" />

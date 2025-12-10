@@ -69,6 +69,7 @@
 
     <el-table v-loading="loading" :data="companiesList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="用户ID" align="center" prop="userId" />
       <el-table-column label="公司ID" align="center" prop="companyId" />
       <el-table-column label="公司名称" align="center" prop="companyName" />
       <el-table-column label="公司Logo" align="center" prop="logoUrl" width="100">
@@ -76,9 +77,22 @@
           <image-preview :src="scope.row.logoUrl" :width="50" :height="50"/>
         </template>
       </el-table-column>
-      <el-table-column label="行业领域" align="center" prop="industryId" />
-      <el-table-column label="企业性质" align="center" prop="natureId" />
-      <el-table-column label="公司规模" align="center" prop="companyScaleId" />
+      <el-table-column label="行业领域" align="center" prop="industryName">
+        <template #default="scope">
+          <span>{{ scope.row.industryName || '-' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="企业性质" align="center" prop="natureName">
+        <template #default="scope">
+          <span>{{ scope.row.natureName || '-' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="公司规模" align="center" prop="companyScaleName">
+        <template #default="scope">
+          <span>{{ scope.row.companyScaleName || '-' }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column label="联系人姓名" align="center" prop="contactPersonName" />
       <el-table-column label="联系人电话" align="center" prop="contactPersonPhone" />
       <el-table-column label="创建时间" align="center" prop="createdAt" width="180">
@@ -115,7 +129,37 @@
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="公司Logo" prop="logoUrl">
-          <image-upload v-model="form.logoUrl"/>
+          <image-upload v-model="form.logoUrl" action="/recruit/companies/logo"/>
+        </el-form-item>
+        <el-form-item label="行业领域" prop="industryId">
+          <el-select v-model="form.industryId" placeholder="请选择行业领域" clearable>
+            <el-option
+              v-for="item in industriesOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="企业性质" prop="natureId">
+          <el-select v-model="form.natureId" placeholder="请选择企业性质" clearable>
+            <el-option
+              v-for="item in naturesOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="公司规模" prop="companyScaleId">
+          <el-select v-model="form.companyScaleId" placeholder="请选择公司规模" clearable>
+            <el-option
+              v-for="item in scalesOptions"
+              :key="item.id"
+              :label="item.scale"
+              :value="item.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="公司地址" prop="companyAddress">
           <el-input v-model="form.companyAddress" placeholder="请输入公司地址" />
@@ -139,6 +183,9 @@
 
 <script setup name="Companies">
 import { listCompanies, getCompanies, delCompanies, addCompanies, updateCompanies } from "@/api/recruit/companies"
+import { listIndustries } from "@/api/recruit/industries"
+import { listNatures } from "@/api/recruit/natures"
+import { listScales } from "@/api/recruit/scales"
 
 const { proxy } = getCurrentInstance()
 
@@ -152,6 +199,9 @@ const multiple = ref(true)
 const total = ref(0)
 const title = ref("")
 const daterangeCreatedAt = ref([])
+const industriesOptions = ref([])
+const naturesOptions = ref([])
+const scalesOptions = ref([])
 
 const data = reactive({
   form: {},
@@ -287,5 +337,29 @@ function handleExport() {
   }, `companies_${new Date().getTime()}.xlsx`)
 }
 
+/** 加载行业领域选项 */
+function loadIndustries() {
+  listIndustries({ pageNum: 1, pageSize: 1000 }).then(response => {
+    industriesOptions.value = response.rows || []
+  })
+}
+
+/** 加载企业性质选项 */
+function loadNatures() {
+  listNatures({ pageNum: 1, pageSize: 1000 }).then(response => {
+    naturesOptions.value = response.rows || []
+  })
+}
+
+/** 加载公司规模选项 */
+function loadScales() {
+  listScales({ pageNum: 1, pageSize: 1000 }).then(response => {
+    scalesOptions.value = response.rows || []
+  })
+}
+
 getList()
+loadIndustries()
+loadNatures()
+loadScales()
 </script>
