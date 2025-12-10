@@ -116,8 +116,8 @@
           {{ getCategoryName(scope.row.type) }}
         </template>
       </el-table-column>
-      <el-table-column label="最少薪资(k/元)" align="center" prop="maxSalary" />
-      <el-table-column label="最少薪资(k/元)" align="center" prop="maxSalary" />
+      <el-table-column label="最少薪资(k/元)" align="center" prop="minSalary" />
+      <el-table-column label="最多薪资(k/元)="center" prop="maxSalary" />   
       <el-table-column label="岗位性质" align="center" prop="workNature">
         <template #default="scope">
           <dict-tag :options="biz_work_nature" :value="scope.row.workNature"/>
@@ -196,7 +196,7 @@
           <el-input v-model="form.minSalary" placeholder="请输入最少薪资(校招k/实习￥)" />
         </el-form-item>
         <el-form-item label="最多薪资" prop="maxSalary">
-          <el-input v-model="form.maxSalary" placeholder="请输入最少薪资(校招k/实习￥)" />
+          <el-input v-model="form.maxSalary" placeholder="请输入最多薪资(校招k/实习￥)" />
         </el-form-item>
         <el-form-item label="省份" prop="provinceId">
           <el-select v-model="form.provinceId" placeholder="请选择省份" clearable @change="handleProvinceChange">
