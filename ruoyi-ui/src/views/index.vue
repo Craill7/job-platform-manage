@@ -19,10 +19,6 @@
           <el-tag effect="dark" type="info">企业对接人才</el-tag>
         </div>
         <div class="hero-actions">
-          <el-button type="primary" plain>
-            快速发布招聘
-          </el-button>
-
           <el-button type="primary" plain @click="goJobAudit">
             待审核岗位
             <span class="audit-count">{{ pendingJobCount }}</span>
@@ -31,6 +27,10 @@
           <el-button type="primary" plain @click="goAccountAudit">
             待审核账号
             <span class="audit-count">{{ pendingAccountCount }}</span>
+          </el-button>
+
+          <el-button type="primary" plain @click="goJobPublish">
+            快速发布招聘
           </el-button>
         </div>
 
@@ -71,7 +71,7 @@
         <el-card shadow="never" class="home-card">
           <template #header>
             <div class="card-header">
-              <span>最新招聘 / 活动动态</span>
+              <span>活动动态</span>
             </div>
           </template>
           <el-timeline>
@@ -89,7 +89,7 @@
         </el-card>
       </el-col>
 
-      <!-- 右：角色功能 + 今日待办 -->
+      <!-- 右：角色功能一览 -->
       <el-col :xs="24" :md="10">
         <!-- 角色功能一览 -->
         <el-card shadow="never" class="home-card">
@@ -110,7 +110,6 @@
             </li>
           </ul>
         </el-card>
-
       </el-col>
     </el-row>
   </div>
@@ -134,7 +133,7 @@ const timeline = ref([])
 /**
  * 获取接口数据
  */
-const fetchOverviewData = async () => {
+ const fetchOverviewData = async () => {
   try {
     const res = await request({
       url: '/system/home/overview', // 接口地址
@@ -147,7 +146,13 @@ const fetchOverviewData = async () => {
     pendingAccountCount.value = data.companyCount ?? 0
 
     // 更新最新动态（招聘活动）
-    timeline.value = data.latestTimeline ?? []
+    // 对时间进行排序，按日期从最近到最远
+    const sortedTimeline = data.latestTimeline.sort((a, b) => {
+      return new Date(b.time) - new Date(a.time); // 按时间排序，最新的排前面
+    });
+
+    // 只取最近的 5 条记录
+    timeline.value = sortedTimeline.slice(0, 5);
     
     // 更新统计卡片
     statCards.value = [
@@ -160,14 +165,20 @@ const fetchOverviewData = async () => {
   }
 }
 
+
 /** 跳转到岗位审核页面 */
 const goJobAudit = () => {
-  router.push('/audit/job')
+  router.push('/judge/job-review')
 }
 
 /** 跳转到账号审核页面 */
 const goAccountAudit = () => {
-  router.push('/audit/account')
+  router.push('/judge/account-review')
+}
+
+/** 跳转到快速发布招聘页面 */
+const goJobPublish = () => {
+  router.push('/recruit/jobs')
 }
 
 onMounted(() => {
@@ -212,11 +223,9 @@ const roles = [
 ]
 </script>
 
-
 <style scoped lang="scss">
 .home {
-  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Microsoft YaHei",
-    sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 15px;
   color: #303133;
 
