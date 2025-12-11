@@ -31,6 +31,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="postedByUserId"    column="posted_by_user_id"    />
     </resultMap>
 
+
+    <resultMap type="com.ruoyi.recruit.domain.JobAuditVo" id="JobAuditVoResult">
+        <result property="id"               column="id" />
+        <result property="companyName"      column="company_name" />
+        <result property="title"            column="title" />
+        <result property="typeName"         column="type_name" />
+        <result property="workLocation"     column="work_location" />
+        <result property="minSalary"        column="min_salary" />
+        <result property="maxSalary"        column="max_salary" />
+        <result property="workNature"       column="work_nature" />
+        <result property="status"           column="status" />
+        <result property="postedByUserName" column="posted_by_user_name" />
+        <result property="createdAt"        column="created_at" />
+        <result property="auditedAt"        column="audited_at" />
+    </resultMap>
+
+    <resultMap type="com.ruoyi.recruit.domain.JobDetailVo" id="JobDetailVoResult">
+        <result property="id"               column="id" />
+        <result property="companyName"      column="company_name" />
+        <result property="title"            column="title" />
+        <result property="typeName"         column="type_name" />
+        <result property="department"       column="department" />
+        <result property="minSalary"        column="min_salary" />
+        <result property="maxSalary"        column="max_salary" />
+        <result property="addressDetail"    column="address_detail" />
+        <result property="workNature"       column="work_nature" />
+        <result property="requiredDegree"   column="required_degree" />
+        <result property="headcount"        column="headcount" />
+        <result property="deadline"         column="deadline" />
+        <result property="description"      column="description" />
+        <result property="techRequirements" column="tech_requirements" />
+        <result property="bonusPoints"      column="bonus_points" />
+        <result property="postedByUserName" column="posted_by_user_name" />
+        <result property="createdAt"        column="created_at" />
+        <result property="status"           column="status" />
+    </resultMap>
+
     <sql id="selectJobsVo">
         select j.id, j.company_id, j.department, j.title, j.type, j.description, j.tech_requirements, j.bonus_points, j.min_salary, j.max_salary, j.province_id, j.city_id, j.address_detail, j.work_nature, j.required_degree, j.headcount, j.required_start_date, j.deadline, j.created_at, j.updated_at, j.status, j.view_count, j.posted_by_user_id from jobs j
     </sql>
@@ -57,12 +94,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where j.id = #{id}
     </select>
 
-    <select id="selectJobAuditList" parameterType="Jobs" resultMap="JobsResult">
-        SELECT j.id, j.company_id, j.title, j.description, j.min_salary, j.max_salary,
-        j.work_nature, j.status, j.created_at, j.deadline, j.headcount,
-        c.company_name
+    <select id="selectJobAuditVoList" parameterType="Jobs" resultMap="JobAuditVoResult">
+        SELECT
+        j.id,
+        j.title,
+        j.min_salary,
+        j.max_salary,
+        j.work_nature,
+        j.status,
+        j.created_at,
+        c.company_name,
+        -- 关联岗位类别表
+        tjc.name AS type_name,
+        -- 拼接省份和城市作为工作地点
+        CONCAT(IFNULL(tp.name, ''), IFNULL(tc.name, '')) AS work_location,
+        -- 关联用户表获取发布人 (这里假设展示邮箱，若有昵称字段可换成 nick_name)
+        u.email AS posted_by_user_name,
+        -- 子查询获取最新的审核时间 (性能优化提示：如果数据量极大，建议在 jobs 表增加 audited_at 冗余字段)
+        (SELECT created_at FROM job_audit_logs WHERE job_id = j.id ORDER BY created_at DESC LIMIT 1) AS audited_at
         FROM jobs j
         LEFT JOIN companies c ON j.company_id = c.company_id
+        LEFT JOIN t_job_categories tjc ON j.type = tjc.id
+        LEFT JOIN t_provinces tp ON j.province_id = tp.id
+        LEFT JOIN t_cities tc ON j.city_id = tc.id
+        LEFT JOIN users u ON j.posted_by_user_id = u.id
         <where>
             <if test="status != null">
                 AND j.status = #{status}
@@ -81,6 +136,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
         </where>
         ORDER BY j.created_at DESC
+    </select>
+
+    <select id="selectJobDetailVoById" parameterType="Long" resultMap="JobDetailVoResult">
+        SELECT
+            j.id,
+            c.company_name,
+            j.title,
+            tjc.name AS type_name,
+            j.department,
+            j.min_salary,
+            j.max_salary,
+            j.address_detail,
+            j.work_nature,
+            j.required_degree,
+            j.headcount,
+            j.deadline,
+            j.description,
+            j.tech_requirements,
+            j.bonus_points,
+            u.email AS posted_by_user_name,
+            j.created_at,
+            j.status
+        FROM jobs j
+                 LEFT JOIN companies c ON j.company_id = c.company_id
+                 LEFT JOIN t_job_categories tjc ON j.type = tjc.id
+                 LEFT JOIN users u ON j.posted_by_user_id = u.id
+        WHERE j.id = #{id}
     </select>
 
     <insert id="insertJobs" parameterType="Jobs" useGeneratedKeys="true" keyProperty="id">

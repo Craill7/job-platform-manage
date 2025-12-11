@@ -1,6 +1,9 @@
 package com.ruoyi.recruit.service;
 
 import java.util.List;
+
+import com.ruoyi.recruit.domain.JobAuditVo;
+import com.ruoyi.recruit.domain.JobDetailVo;
 import com.ruoyi.recruit.domain.Jobs;
 
 /**
@@ -60,9 +63,14 @@ public interface IJobsService
     public int deleteJobsById(Long id);
 
     /**
-     * 查询岗位审核列表
+     * 查询岗位审核列表 VO
      */
-    List<Jobs> selectJobAuditList(Jobs jobs);
+    public List<JobAuditVo> selectJobAuditVoList(Jobs jobs);
+
+    /**
+     * 查询岗位详情 VO
+     */
+    public JobDetailVo selectJobDetailVoById(Long id);
 
     /**
      * 审核岗位

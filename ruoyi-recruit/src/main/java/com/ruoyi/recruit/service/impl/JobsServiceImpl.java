@@ -81,9 +81,19 @@ public class JobsServiceImpl implements IJobsService
      * @return 岗位列表
      */
     @Override
-    public List<Jobs> selectJobAuditList(Jobs jobs) {
-        // 使用专门的审核列表查询方法，XML中需包含关联查询逻辑
-        return jobsMapper.selectJobAuditList(jobs);
+    public List<JobAuditVo> selectJobAuditVoList(Jobs jobs)
+    {
+        return jobsMapper.selectJobAuditVoList(jobs);
+    }
+
+
+    /**
+     * 查看岗位详情
+     */
+    @Override
+    public JobDetailVo selectJobDetailVoById(Long id)
+    {
+        return jobsMapper.selectJobDetailVoById(id);
     }
 
     /**

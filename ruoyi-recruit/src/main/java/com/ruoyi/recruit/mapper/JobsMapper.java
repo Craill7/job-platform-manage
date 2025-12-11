@@ -1,6 +1,9 @@
 package com.ruoyi.recruit.mapper;
 
 import java.util.List;
+
+import com.ruoyi.recruit.domain.JobAuditVo;
+import com.ruoyi.recruit.domain.JobDetailVo;
 import com.ruoyi.recruit.domain.Jobs;
 
 /**
@@ -65,5 +68,14 @@ public interface JobsMapper
      * @return 数量
      */
     public int countCurrentRecruitJobs();
-    public List<Jobs> selectJobAuditList(Jobs jobs);
+
+    /**
+     * 查询岗位审核列表 (VO)
+     */
+    public List<JobAuditVo> selectJobAuditVoList(Jobs jobs);
+
+    /**
+     * 查看岗位详情 (VO)
+     */
+    public JobDetailVo selectJobDetailVoById(Long id);
 }
