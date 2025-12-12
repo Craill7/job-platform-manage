@@ -2,6 +2,7 @@ package com.ruoyi.recruit.domain;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -26,7 +27,11 @@ public class Users extends BaseEntity
     private String email;
 
     /** 加密后的密码 */
+    @JsonIgnore
     private String passwordHash;
+
+    /** 明文密码（用于修改密码，不持久化到数据库） */
+    private String password;
 
     /** 用户角色 */
     @Excel(name = "用户角色")
@@ -79,6 +84,16 @@ public class Users extends BaseEntity
     public String getPasswordHash() 
     {
         return passwordHash;
+    }
+
+    public void setPassword(String password) 
+    {
+        this.password = password;
+    }
+
+    public String getPassword() 
+    {
+        return password;
     }
 
     public void setRole(Long role) 

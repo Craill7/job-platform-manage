@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ruoyi.recruit.domain.CompanyAudit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.ruoyi.recruit.mapper.UsersMapper;
 import com.ruoyi.recruit.domain.Users;
@@ -21,6 +22,9 @@ public class UsersServiceImpl implements IUsersService
 {
     @Autowired
     private UsersMapper usersMapper;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * 查询账号管理
@@ -55,6 +59,12 @@ public class UsersServiceImpl implements IUsersService
     @Override
     public int insertUsers(Users users)
     {
+        // 如果密码哈希为空，设置默认加密密码为123456
+        if (users.getPasswordHash() == null || users.getPasswordHash().isEmpty())
+        {
+            String defaultPassword = "123456";
+            users.setPasswordHash(passwordEncoder.encode(defaultPassword));
+        }
         return usersMapper.insertUsers(users);
     }
 
@@ -67,6 +77,11 @@ public class UsersServiceImpl implements IUsersService
     @Override
     public int updateUsers(Users users)
     {
+        // 如果提供了明文密码，则加密后更新密码哈希
+        if (users.getPassword() != null && !users.getPassword().isEmpty())
+        {
+            users.setPasswordHash(passwordEncoder.encode(users.getPassword()));
+        }
         return usersMapper.updateUsers(users);
     }
 

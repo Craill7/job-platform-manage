@@ -90,7 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into users
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="email != null">email,</if>
-            <if test="passwordHash != null">password_hash,</if>
+            password_hash,
             <if test="role != null">role,</if>
             <if test="status != null">status,</if>
             <if test="createdAt != null">created_at,</if>
@@ -99,7 +99,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="email != null">#{email},</if>
-            <if test="passwordHash != null">#{passwordHash},</if>
+            #{passwordHash},
             <if test="role != null">#{role},</if>
             <if test="status != null">#{status},</if>
             <if test="createdAt != null">#{createdAt},</if>

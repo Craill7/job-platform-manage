@@ -166,6 +166,19 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item 
+          v-if="form.id != null" 
+          label="新密码" 
+          prop="password"
+        >
+          <el-input 
+            v-model="form.password" 
+            type="password" 
+            placeholder="留空则不修改密码，输入新密码将更新密码" 
+            show-password
+            clearable
+          />
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -206,6 +219,23 @@ const data = reactive({
     createdAt: null,
   },
   rules: {
+    password: [
+      { 
+        validator: (rule, value, callback) => {
+          // 只在修改模式下且密码不为空时验证
+          if (form.value.id != null && value && value.trim() !== '') {
+            if (value.length < 6) {
+              callback(new Error('密码至少需要 6 位'))
+            } else {
+              callback()
+            }
+          } else {
+            callback()
+          }
+        }, 
+        trigger: 'blur' 
+      }
+    ]
   }
 })
 
@@ -237,6 +267,7 @@ function reset() {
   form.value = {
     id: null,
     email: null,
+    password: null,
     passwordHash: null,
     role: null,
     status: null,
@@ -289,14 +320,20 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["allAsersRef"].validate(valid => {
     if (valid) {
+      // 如果是修改且密码为空，则删除password字段，不更新密码
+      const submitData = { ...form.value }
+      if (submitData.id != null && (!submitData.password || submitData.password.trim() === '')) {
+        delete submitData.password
+      }
+      
       if (form.value.id != null) {
-        updateAllAsers(form.value).then(response => {
+        updateAllAsers(submitData).then(response => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
-        addAllAsers(form.value).then(response => {
+        addAllAsers(submitData).then(response => {
           proxy.$modal.msgSuccess("新增成功")
           open.value = false
           getList()
