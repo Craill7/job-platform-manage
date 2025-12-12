@@ -107,7 +107,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         -- 关联岗位类别表
         tjc.name AS type_name,
         -- 拼接省份和城市作为工作地点
-        CONCAT(IFNULL(tp.name, ''), IFNULL(tc.name, '')) AS work_location,
+        CASE
+        WHEN tp.name = tc.name THEN tp.name
+        ELSE CONCAT(IFNULL(tp.name, ''), IFNULL(tc.name, ''))
+        END AS work_location,
         -- 关联用户表获取发布人 (这里假设展示邮箱，若有昵称字段可换成 nick_name)
         u.email AS posted_by_user_name,
         -- 子查询获取最新的审核时间 (性能优化提示：如果数据量极大，建议在 jobs 表增加 audited_at 冗余字段)
