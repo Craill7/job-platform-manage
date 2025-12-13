@@ -104,16 +104,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         j.status,
         j.created_at,
         c.company_name,
-        -- 关联岗位类别表
+
         tjc.name AS type_name,
-        -- 拼接省份和城市作为工作地点
         CASE
         WHEN tp.name = tc.name THEN tp.name
         ELSE CONCAT(IFNULL(tp.name, ''), IFNULL(tc.name, ''))
         END AS work_location,
-        -- 关联用户表获取发布人 (这里假设展示邮箱，若有昵称字段可换成 nick_name)
         u.email AS posted_by_user_name,
-        -- 子查询获取最新的审核时间 (性能优化提示：如果数据量极大，建议在 jobs 表增加 audited_at 冗余字段)
         (SELECT created_at FROM job_audit_logs WHERE job_id = j.id ORDER BY created_at DESC LIMIT 1) AS audited_at
         FROM jobs j
         LEFT JOIN companies c ON j.company_id = c.company_id
@@ -131,12 +128,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="companyName != null and companyName != ''">
                 AND c.company_name LIKE concat('%', #{companyName}, '%')
             </if>
-            <if test="params.beginTime != null and params.beginTime != ''">
-                AND j.created_at &gt;= #{params.beginTime}
+
+            <if test="beginCreatedAt != null and endCreatedAt != null">
+                AND j.created_at &gt;= #{beginCreatedAt}
+                AND j.created_at &lt; DATE_ADD(#{endCreatedAt}, INTERVAL 1 DAY)
             </if>
-            <if test="params.endTime != null and params.endTime != ''">
-                AND j.created_at &lt;= #{params.endTime}
-            </if>
+
+
         </where>
         ORDER BY j.created_at DESC
     </select>

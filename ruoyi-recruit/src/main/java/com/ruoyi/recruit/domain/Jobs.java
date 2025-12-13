@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 岗位管理对象 jobs
@@ -112,6 +113,13 @@ public class Jobs extends BaseEntity
     /** 岗位浏览次数 */
     @Excel(name = "岗位浏览次数")
     private Long viewCount;
+
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date beginCreatedAt;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date endCreatedAt;
 
     /** 关联users.id */
     private Long postedByUserId;
@@ -378,6 +386,22 @@ public class Jobs extends BaseEntity
 
     public String getAuditRemark() { return auditRemark; }
     public void setAuditRemark(String auditRemark) { this.auditRemark = auditRemark; }
+
+    public Date getBeginCreatedAt() {
+        return beginCreatedAt;
+    }
+
+    public void setBeginCreatedAt(Date beginCreatedAt) {
+        this.beginCreatedAt = beginCreatedAt;
+    }
+
+    public Date getEndCreatedAt() {
+        return endCreatedAt;
+    }
+
+    public void setEndCreatedAt(Date endCreatedAt) {
+        this.endCreatedAt = endCreatedAt;
+    }
 
     @Override
     public String toString() {

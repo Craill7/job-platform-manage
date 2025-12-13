@@ -22,7 +22,6 @@ public class JobAuditVo {
     private String title;
 
     /** 岗位类别名称 */
-    @Excel(name = "岗位类别")
     private String typeName;
 
     /** 工作地点 (省份+城市) */
@@ -30,11 +29,9 @@ public class JobAuditVo {
     private String workLocation;
 
     /** 最少薪资(k) */
-    @Excel(name = "最少薪资(k)")
     private Long minSalary;
 
     /** 最多薪资(k) */
-    @Excel(name = "最多薪资(k)")
     private Long maxSalary;
 
     /** 岗位性质 */
@@ -50,12 +47,12 @@ public class JobAuditVo {
     private String postedByUserName;
 
     /** 创建时间 (发布时间) */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Excel(name = "发布时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
 
     /** 最近审核时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Excel(name = "审核时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date auditedAt;
 
