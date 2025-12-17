@@ -26,21 +26,21 @@ public class Jobs extends BaseEntity
     private Long companyId;
 
     /** 公司名称（用于显示，通过companyId关联查询获得） */
-    @Excel(name = "公司名称")  // ✅ 已经正确
+    @Excel(name = "公司名称")
     private String companyName;
 
     /** 省份ID */
     private Long provinceId;
 
     /** 省份名称（用于显示，通过provinceId关联查询获得） */
-    @Excel(name = "省份")  // ⭐ 添加这个注解
+    @Excel(name = "省份")
     private String provinceName;
 
     /** 城市ID */
     private Long cityId;
 
     /** 城市名称（用于显示，通过cityId关联查询获得） */
-    @Excel(name = "城市")  // ⭐ 添加这个注解
+    @Excel(name = "城市")
     private String cityName;
 
     /** 所属部门 */
@@ -55,7 +55,7 @@ public class Jobs extends BaseEntity
     private Long type;
 
     /** 岗位类别 */
-    @Excel(name = "岗位类别")  // ✅ 已经正确
+    @Excel(name = "岗位类别")
     private String typeName;
 
     /** 岗位描述 */
@@ -82,14 +82,14 @@ public class Jobs extends BaseEntity
     private Long workNature;
 
     /** 岗位性质 */
-    @Excel(name = "岗位性质")  // ✅ 已经正确
+    @Excel(name = "岗位性质")
     private String workNatureName;
 
     /** 学历要求ID */
     private Long requiredDegree;
 
     /** 学历要求 */
-    @Excel(name = "学历要求")  // ✅ 已经正确
+    @Excel(name = "学历要求")
     private String requiredDegreeName;
 
     /** 招聘人数 */
@@ -101,12 +101,12 @@ public class Jobs extends BaseEntity
 
     /** 招聘截止日期 */
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    @Excel(name = "截止日期", width = 30, dateFormat = "yyyy-MM-dd")  // ⭐ 添加这个注解
+    @Excel(name = "截止日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date deadline;
 
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")  // ⭐ 添加这个注解
+    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
 
     /** 更新时间 */
@@ -117,7 +117,7 @@ public class Jobs extends BaseEntity
     private Long status;
 
     /** 岗位状态 */
-    @Excel(name = "岗位状态")  // ✅ 已经正确
+    @Excel(name = "岗位状态")
     private String statusName;
 
     /** 审核备注 (接收前端参数用) */
