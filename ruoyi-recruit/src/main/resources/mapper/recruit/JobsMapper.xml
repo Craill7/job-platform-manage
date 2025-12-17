@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.recruit.mapper.JobsMapper">
-    
+
     <resultMap type="Jobs" id="JobsResult">
         <result property="id"    column="id"    />
         <result property="companyId"    column="company_id"    />
@@ -11,6 +11,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="department"    column="department"    />
         <result property="title"    column="title"    />
         <result property="type"    column="type"    />
+        <result property="typeName"    column="type_name"    />  <!-- ⭐ 添加这行 -->
         <result property="description"    column="description"    />
         <result property="techRequirements"    column="tech_requirements"    />
         <result property="bonusPoints"    column="bonus_points"    />
@@ -68,16 +69,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="status"           column="status" />
     </resultMap>
 
+    <!-- ⭐ 修改这个 SQL，添加岗位类别关联 -->
     <sql id="selectJobsVo">
-        select j.id, j.company_id, j.department, j.title, j.type, j.description, j.tech_requirements, j.bonus_points, j.min_salary, j.max_salary, j.province_id, j.city_id, j.address_detail, j.work_nature, j.required_degree, j.headcount, j.required_start_date, j.deadline, j.created_at, j.updated_at, j.status, j.view_count, j.posted_by_user_id from jobs j
+        select j.id, j.company_id, j.department, j.title, j.type,
+               tjc.name as type_name,
+               j.description, j.tech_requirements, j.bonus_points,
+               j.min_salary, j.max_salary, j.province_id, j.city_id,
+               j.address_detail, j.work_nature, j.required_degree,
+               j.headcount, j.required_start_date, j.deadline,
+               j.created_at, j.updated_at, j.status, j.view_count, j.posted_by_user_id
+        from jobs j
+                 left join t_job_categories tjc on j.type = tjc.id
     </sql>
 
+    <!-- ⭐ 修改 selectJobsList，处理公司名称条件查询 -->
     <select id="selectJobsList" parameterType="Jobs" resultMap="JobsResult">
-        <include refid="selectJobsVo"/>
+        select j.id, j.company_id, j.department, j.title, j.type,
+        tjc.name as type_name,
+        j.description, j.tech_requirements, j.bonus_points,
+        j.min_salary, j.max_salary, j.province_id, j.city_id,
+        j.address_detail, j.work_nature, j.required_degree,
+        j.headcount, j.required_start_date, j.deadline,
+        j.created_at, j.updated_at, j.status, j.view_count, j.posted_by_user_id
+        from jobs j
+        left join t_job_categories tjc on j.type = tjc.id
         <if test="companyName != null and companyName != ''">
             left join companies c on j.company_id = c.company_id
         </if>
-        <where>  
+        <where>
             <if test="companyId != null "> and j.company_id = #{companyId}</if>
             <if test="companyName != null and companyName != ''"> and c.company_name like concat('%', #{companyName}, '%')</if>
             <if test="title != null  and title != ''"> and j.title like concat('%', #{title}, '%')</if>
@@ -88,7 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null "> and j.status = #{status}</if>
         </where>
     </select>
-    
+
     <select id="selectJobsById" parameterType="Long" resultMap="JobsResult">
         <include refid="selectJobsVo"/>
         where j.id = #{id}
@@ -191,7 +210,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status,</if>
             <if test="viewCount != null">view_count,</if>
             <if test="postedByUserId != null">posted_by_user_id,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
             <if test="department != null">#{department},</if>
@@ -215,7 +234,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">#{status},</if>
             <if test="viewCount != null">#{viewCount},</if>
             <if test="postedByUserId != null">#{postedByUserId},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateJobs" parameterType="Jobs">
@@ -252,7 +271,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteJobsByIds" parameterType="String">
-        delete from jobs where id in 
+        delete from jobs where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

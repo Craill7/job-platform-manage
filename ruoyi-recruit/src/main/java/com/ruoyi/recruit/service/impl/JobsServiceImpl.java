@@ -1,23 +1,22 @@
 package com.ruoyi.recruit.service.impl;
 
-import java.util.List;
-
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.DictUtils;  // 导入 DictUtils
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.recruit.constant.DictTypeConstants;  // 导入常量
 import com.ruoyi.recruit.domain.*;
 import com.ruoyi.recruit.mapper.JobAuditLogsMapper;
+import com.ruoyi.recruit.mapper.JobsMapper;
+import com.ruoyi.recruit.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.recruit.mapper.JobsMapper;
-import com.ruoyi.recruit.service.IJobsService;
-import com.ruoyi.recruit.service.ICompaniesService;
-import com.ruoyi.recruit.service.ITProvincesService;
-import com.ruoyi.recruit.service.ITCitiesService;
-import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 岗位管理Service业务层处理
- * 
+ *
  * @author Yihan
  * @date 2025-12-01
  */
@@ -41,7 +40,7 @@ public class JobsServiceImpl implements IJobsService
 
     /**
      * 查询岗位管理
-     * 
+     *
      * @param id 岗位管理主键
      * @return 岗位管理
      */
@@ -52,12 +51,13 @@ public class JobsServiceImpl implements IJobsService
         // 填充公司名称、省份名称、城市名称
         fillCompanyName(jobs);
         fillProvinceAndCityName(jobs);
+        fillDictNames(jobs);  // 填充字典名称
         return jobs;
     }
 
     /**
      * 查询岗位管理列表
-     * 
+     *
      * @param jobs 岗位管理
      * @return 岗位管理
      */
@@ -65,19 +65,21 @@ public class JobsServiceImpl implements IJobsService
     public List<Jobs> selectJobsList(Jobs jobs)
     {
         List<Jobs> jobsList = jobsMapper.selectJobsList(jobs);
-        // 填充公司名称、省份名称、城市名称
+        // 填充公司名称、省份名称、城市名称、字典名称
         if (jobsList != null && !jobsList.isEmpty()) {
             for (Jobs job : jobsList) {
                 fillCompanyName(job);
                 fillProvinceAndCityName(job);
+                fillDictNames(job);  // 填充字典名称
             }
         }
         return jobsList;
     }
+
     /**
      * 查询岗位审核列表 (关联查询公司名称)
      *
-     * * @param jobs 查询条件
+     * @param jobs 查询条件
      * @return 岗位列表
      */
     @Override
@@ -85,7 +87,6 @@ public class JobsServiceImpl implements IJobsService
     {
         return jobsMapper.selectJobAuditVoList(jobs);
     }
-
 
     /**
      * 查看岗位详情
@@ -99,17 +100,17 @@ public class JobsServiceImpl implements IJobsService
     /**
      * 审核岗位 (更新状态 + 记录日志)
      *
-     * * @param jobId 岗位ID
+     * @param jobId 岗位ID
      * @param status 目标状态 (20=通过, 30=拒绝)
      * @param remark 审核备注
      * @param operatorId 操作人ID
      */
     @Override
     @Transactional
-    public void auditJob(Long jobId, Integer status, String remark, Long operatorId,String operatorContact) {
+    public void auditJob(Long jobId, Integer status, String remark, Long operatorId, String operatorContact) {
         // 1. 更新岗位状态
         Jobs job = new Jobs();
-        job.setId(jobId); // 确保类型匹配，数据库为 int
+        job.setId(jobId);
         job.setStatus(status.longValue());
         jobsMapper.updateJobs(job);
 
@@ -126,24 +127,25 @@ public class JobsServiceImpl implements IJobsService
 
     /**
      * 批量审核岗位
-     * * @param jobIds 岗位ID列表
+     *
+     * @param jobIds 岗位ID列表
      * @param status 目标状态
      * @param remark 备注
      * @param operatorId 操作人ID
      */
     @Override
     @Transactional
-    public void batchAuditJobs(List<Long> jobIds, Integer status, String remark, Long operatorId,String operatorContact) {
+    public void batchAuditJobs(List<Long> jobIds, Integer status, String remark, Long operatorId, String operatorContact) {
         for (Long jobId : jobIds) {
             // 复用单条审核逻辑，确保每条都写入日志
-            this.auditJob(jobId, status, remark, operatorId,operatorContact);
+            this.auditJob(jobId, status, remark, operatorId, operatorContact);
         }
     }
 
     /**
      * 填充公司名称
      * 根据companyId查询companies表获取company_name
-     * 
+     *
      * @param jobs 岗位对象
      */
     private void fillCompanyName(Jobs jobs)
@@ -159,7 +161,7 @@ public class JobsServiceImpl implements IJobsService
     /**
      * 填充省份和城市名称
      * 根据provinceId和cityId查询获取省份和城市名称
-     * 
+     *
      * @param jobs 岗位对象
      */
     private void fillProvinceAndCityName(Jobs jobs)
@@ -183,8 +185,47 @@ public class JobsServiceImpl implements IJobsService
     }
 
     /**
+     * 填充字典名称
+     * 使用 DictUtils 从 Redis 缓存中获取字典标签
+     *
+     * @param jobs 岗位对象
+     */
+    private void fillDictNames(Jobs jobs) {
+        if (jobs == null) {
+            return;
+        }
+
+        // 填充工作性质名称
+        if (jobs.getWorkNature() != null) {
+            String workNatureName = DictUtils.getDictLabel(
+                    DictTypeConstants.BIZ_WORK_NATURE,
+                    jobs.getWorkNature().toString()
+            );
+            jobs.setWorkNatureName(workNatureName);
+        }
+
+        // 填充学历要求名称
+        if (jobs.getRequiredDegree() != null) {
+            String requiredDegreeName = DictUtils.getDictLabel(
+                    DictTypeConstants.BIZ_REQUIRED_DEGREE_LEVEL,
+                    jobs.getRequiredDegree().toString()
+            );
+            jobs.setRequiredDegreeName(requiredDegreeName);
+        }
+
+        // 填充岗位状态名称
+        if (jobs.getStatus() != null) {
+            String statusName = DictUtils.getDictLabel(
+                    DictTypeConstants.BIZ_JOB_STATUS,
+                    jobs.getStatus().toString()
+            );
+            jobs.setStatusName(statusName);
+        }
+    }
+
+    /**
      * 新增岗位管理
-     * 
+     *
      * @param jobs 岗位管理
      * @return 结果
      */
@@ -211,7 +252,7 @@ public class JobsServiceImpl implements IJobsService
 
     /**
      * 修改岗位管理
-     * 
+     *
      * @param jobs 岗位管理
      * @return 结果
      */
@@ -226,7 +267,7 @@ public class JobsServiceImpl implements IJobsService
     /**
      * 根据公司名称转换为companyId
      * 如果jobs中有companyName，则根据companyName查询获取companyId并更新
-     * 
+     *
      * @param jobs 岗位对象
      */
     private void convertCompanyNameToId(Jobs jobs)
@@ -244,7 +285,7 @@ public class JobsServiceImpl implements IJobsService
 
     /**
      * 批量删除岗位管理
-     * 
+     *
      * @param ids 需要删除的岗位管理主键
      * @return 结果
      */
@@ -256,7 +297,7 @@ public class JobsServiceImpl implements IJobsService
 
     /**
      * 删除岗位管理信息
-     * 
+     *
      * @param id 岗位管理主键
      * @return 结果
      */
@@ -265,9 +306,4 @@ public class JobsServiceImpl implements IJobsService
     {
         return jobsMapper.deleteJobsById(id);
     }
-
-
-
 }
-
-
