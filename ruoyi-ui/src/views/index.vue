@@ -224,330 +224,200 @@ const roles = [
 </script>
 
 <style scoped lang="scss">
-.home {
-  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 15px;
-  color: #303133;
+@use "sass:color";
 
-  /* 顶部 Hero 区：莫兰迪蓝系 */
-  .home-hero {
-    display: flex;
-    gap: 24px;
-    padding: 24px 26px;
-    margin-bottom: 12px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #5b6d8a, #9aa9c8);
-    color: #fff;
-    overflow: hidden;
-  }
+/* 主色 */
+$primary-dark-green: #2a5e23;
+$primary-gradient: linear-gradient(135deg, #2a5e23, #4a7c3a);
 
-  .hero-left {
-    flex: 1.4;
-    animation: fadeInUp 0.6s ease-out;
-  }
+/* ---------- 顶部 Hero ---------- */
+.home-hero {
+  display: flex;
+  gap: 24px;
+  padding: 24px 26px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: $primary-gradient;
+  color: #fff;
+  overflow: hidden;
+}
 
-  .hero-right {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeInUp 0.8s ease-out;
-  }
+.hero-left {
+  flex: 1.4;
+  animation: fadeInUp 0.6s ease-out;
+}
 
-  .hero-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.16);
-    font-size: 13px;
-    margin-bottom: 8px;
-  }
-
-  .hero-title {
-    margin: 0 0 8px;
-    font-size: 30px;
-    font-weight: 600;
-  }
-
-  .hero-subtitle {
-    margin: 4px 0;
-    line-height: 1.9;
-    font-size: 15px;
-    opacity: 0.96;
-
-    b {
-      font-weight: 600;
-    }
-  }
-
-  .hero-tags {
-    margin-top: 14px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .hero-actions {
-    margin-top: 18px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-  }
-
-  .hero-audit-group {
+.hero-right {
+  flex: 1;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
+  justify-content: center;
+  animation: fadeInUp 0.8s ease-out;
 }
 
-.audit-btn {
-  border-color: rgba(255, 255, 255, 0.6);
-  color: rgba(255, 255, 255, 0.9);
-  background: transparent;
+.hero-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 13px;
+  margin-bottom: 8px;
 }
 
-.audit-btn:hover {
-  border-color: #ffffff;
-  color: #ffffff;
-}
-
-.audit-count {
-  margin-left: 4px;
+.hero-title {
+  margin: 0 0 8px;
+  font-size: 30px;
   font-weight: 600;
 }
 
+.hero-subtitle {
+  margin: 4px 0;
+  line-height: 1.9;
+  font-size: 15px;
+  opacity: 0.96;
+  b { font-weight: 600; }
+}
 
-  .hero-version {
-    margin-top: 14px;
-    font-size: 14px;
-    opacity: 0.9;
+/* 深绿色 tag */
+.hero-tags .el-tag--info {
+  background: rgba(42, 94, 35, 0.85);
+  border-color: rgba(42, 94, 35, 0.85);
+  color: #fff;
+}
 
-    span {
-      font-weight: 600;
-    }
+.hero-actions {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.el-button--primary.is-plain {
+  border-color: $primary-dark-green;
+  color: $primary-dark-green;
+  &:hover {
+    border-color: color.adjust($primary-dark-green, $lightness: 8%);
+    color:      color.adjust($primary-dark-green, $lightness: 8%);
   }
+}
 
-  .hero-graphic {
-    position: relative;
-    width: 210px;
-    height: 210px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #ffffff, #dde3f5);
-    box-shadow: 0 14px 36px rgba(60, 70, 110, 0.22);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.audit-count { margin-left: 4px; font-weight: 600; }
 
-  .hero-graphic-center {
-    width: 135px;
-    height: 135px;
-    border-radius: 50%;
-    background: linear-gradient(145deg, #5b6d8a, #8fa3c5);
-    color: #fff;
-    box-shadow: 0 10px 24px rgba(70, 90, 150, 0.45);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    font-size: 14px;
-  }
+.hero-version {
+  margin-top: 14px;
+  font-size: 14px;
+  opacity: 0.9;
+  span { font-weight: 600; }
+}
 
-  .circle-text {
-    letter-spacing: 2px;
-  }
+/* 右侧装饰圆 */
+.hero-graphic {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff, #e6efe4);
+  box-shadow: 0 14px 36px rgba(42,94,35,.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .bubble {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.75;
-    animation: float 6s ease-in-out infinite;
-  }
+.hero-graphic-center {
+  width: 135px;
+  height: 135px;
+  border-radius: 50%;
+  background: $primary-gradient;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(42,94,35,.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
 
-  .bubble-1 {
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.75);
-    top: 10px;
-    right: -6px;
-  }
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.75;
+  animation: float 6s ease-in-out infinite;
+}
+.bubble-1 { width: 40px; height: 40px; background: rgba(255,255,255,.75); top: 10px; right: -6px; }
+.bubble-2 { width: 30px; height: 30px; background: rgba(255,255,255,.6);  bottom: 26px; left: 4px; animation-delay: .8s; }
+.bubble-3 { width: 18px; height: 18px; background: rgba(255,255,255,.65); top: 42px; left: 26px; animation-delay: 1.4s; }
 
-  .bubble-2 {
-    width: 30px;
-    height: 30px;
-    background: rgba(255, 255, 255, 0.6);
-    bottom: 26px;
-    left: 4px;
-    animation-delay: 0.8s;
-  }
-
-  .bubble-3 {
-    width: 18px;
-    height: 18px;
-    background: rgba(255, 255, 255, 0.65);
-    top: 42px;
-    left: 26px;
-    animation-delay: 1.4s;
-  }
-
-  /* 概览卡片 */
-  .home-stat-row {
-    margin-top: 4px;
-    margin-bottom: 10px;
-  }
-
-  .stat-card {
-    background: #fff;
-    border-radius: 10px;
-    padding: 16px 16px 13px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .stat-card:hover {
+/* ---------- 统计卡片 ---------- */
+.home-stat-row { margin: 4px 0 10px; }
+.stat-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 16px 13px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.05);
+  transition: transform .2s, box-shadow .2s;
+  &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 22px rgba(70, 90, 150, 0.18);
+    box-shadow: 0 10px 22px rgba(42,94,35,.18);
   }
+}
+.stat-label { font-size: 14px; color: #909399; margin-bottom: 4px; }
+.stat-value { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+.stat-desc  { font-size: 13px; color: #a0a3ad; }
 
-  .stat-label {
-    font-size: 14px;
-    color: #909399;
-    margin-bottom: 4px;
-  }
+/* ---------- 底部卡片 ---------- */
+.home-bottom-row { margin-top: 6px; }
+.home-card { border-radius: 10px; }
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 15px;
+}
+.timeline-title { font-weight: 500; font-size: 15px; margin: 0 0 3px; }
+.timeline-desc  { font-size: 13px; color: #909399; margin: 0; }
 
-  .stat-value {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
+/* 角色列表 */
+.role-list { margin: 0; padding: 0; list-style: none; }
+.role-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #f2f3f5;
+  &:last-child { border: none; }
+}
+.role-title {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.role-dot {
+  width: 8px; height: 8px; border-radius: 50%; margin-right: 8px;
+  &-school   { background: $primary-dark-green; }
+  &-student  { background: #67c23a; }
+  &-company  { background: #e6a23c; }
+}
+.role-desc-list {
+  margin: 0; padding-left: 16px; list-style: none;
+  font-size: 13px; color: #606266; line-height: 1.7;
+}
 
-  .stat-desc {
-    font-size: 13px;
-    color: #a0a3ad;
-  }
+/* ---------- 动画 ---------- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-8px); }
+}
 
-  /* 底部卡片 */
-  .home-bottom-row {
-    margin-top: 6px;
-  }
-
-  .home-card {
-    border-radius: 10px;
-  }
-
-  .home-card-margin {
-    margin-top: 12px;
-  }
-
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-weight: 500;
-    font-size: 15px;
-  }
-
-  .timeline-title {
-    margin: 0 0 3px;
-    font-weight: 500;
-    font-size: 15px;
-  }
-
-  .timeline-desc {
-    margin: 0;
-    font-size: 13px;
-    color: #909399;
-  }
-
-  /* 角色功能一览 */
-  .role-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .role-item {
-    padding: 8px 0;
-    border-bottom: 1px solid #f2f3f5;
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-
-  .role-title {
-    display: flex;
-    align-items: center;
-    font-size: 15px;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-
-  .role-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-right: 8px;
-  }
-
-  .role-dot-school {
-    background: #409eff;
-  }
-
-  .role-dot-student {
-    background: #67c23a;
-  }
-
-  .role-dot-company {
-    background: #e6a23c;
-  }
-
-  .role-desc-list {
-    margin: 0;
-    padding-left: 16px;
-    list-style: none;
-    font-size: 13px;
-    color: #606266;
-
-    li {
-      line-height: 1.7;
-    }
-  }
-
-  /* 动画 */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-8px);
-    }
-  }
-
-  /* 响应式 */
-  @media (max-width: 992px) {
-    .home-hero {
-      flex-direction: column;
-    }
-
-    .hero-right {
-      justify-content: flex-start;
-    }
-  }
+/* ---------- 响应式 ---------- */
+@media (max-width: 992px) {
+  .home-hero { flex-direction: column; }
+  .hero-right { justify-content: flex-start; }
 }
 </style>
