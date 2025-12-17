@@ -22,25 +22,30 @@ public class Applications extends BaseEntity
     private Long id;
 
     /** 投递职位 */
-    @Excel(name = "投递职位")
+
     private Long jobId;
 
     /** 职位名称（用于显示，通过jobId关联查询获得） */
+    @Excel(name = "投递职位")
     private String jobTitle;
 
     /** 投递人 */
-    @Excel(name = "投递人")
+    @Excel(name = "投递人ID")
     private Long studentUserId;
 
     /** 投递人姓名（用于显示，通过studentUserId关联查询获得） */
+    @Excel(name = "投递人")
     private String studentName;
 
     /** 简历 */
     private Long resumeId;
 
-    /** 投递状态 */
-    @Excel(name = "投递状态")
+    /** 投递状态 ID*/
+
     private Long status;
+
+    @Excel(name = "投递状态")
+    private String statusName;
 
     /** 投递时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -142,6 +147,13 @@ public class Applications extends BaseEntity
         return updatedAt;
     }
 
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -152,6 +164,7 @@ public class Applications extends BaseEntity
             .append("studentName", getStudentName())
             .append("resumeId", getResumeId())
             .append("status", getStatus())
+            .append("statusName",getStatusName())
             .append("submittedAt", getSubmittedAt())
             .append("updatedAt", getUpdatedAt())
             .toString();

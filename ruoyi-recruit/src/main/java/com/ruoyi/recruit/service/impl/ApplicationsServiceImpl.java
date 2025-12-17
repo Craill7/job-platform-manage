@@ -1,6 +1,9 @@
 package com.ruoyi.recruit.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.recruit.domain.ApplicationStatus;
+import com.ruoyi.recruit.service.IApplicationStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.recruit.mapper.ApplicationsMapper;
@@ -42,6 +45,7 @@ public class ApplicationsServiceImpl implements IApplicationsService
         // 填充职位名称和投递人名称
         fillJobTitle(applications);
         fillStudentName(applications);
+        fillStatusName(applications);
         return applications;
     }
 
@@ -60,6 +64,7 @@ public class ApplicationsServiceImpl implements IApplicationsService
             for (Applications application : applicationsList) {
                 fillJobTitle(application);
                 fillStudentName(application);
+                fillStatusName(application);
             }
         }
         return applicationsList;
@@ -221,4 +226,20 @@ public class ApplicationsServiceImpl implements IApplicationsService
     {
         return applicationsMapper.deleteApplicationsById(id);
     }
+
+
+    @Autowired
+    private IApplicationStatusService applicationStatusService;
+    private void fillStatusName(Applications applications) {
+        if (applications != null && applications.getStatus() != null) {
+            ApplicationStatus status =
+                    applicationStatusService.selectByCode(
+                            applications.getStatus().toString()
+                    );
+            if (status != null) {
+                applications.setStatusName(status.getName());
+            }
+        }
+    }
+
 }
