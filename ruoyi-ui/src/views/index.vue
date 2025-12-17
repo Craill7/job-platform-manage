@@ -83,7 +83,7 @@
               placement="top"
             >
               <p class="timeline-title">{{ item.title }}</p>
-              <p class="timeline-desc">{{ item.desc }}</p>
+              <p class="timeline-desc" v-html="item.desc" />
             </el-timeline-item>
           </el-timeline>
         </el-card>
@@ -119,9 +119,14 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import request from '@/utils/request'
+import { onBeforeRouteUpdate } from 'vue-router'  
 
 const router = useRouter()
 const version = ref('1.0.0')
+const onSubmit = async () => {
+  await saveActivity(form)            // 你的保存接口
+  router.replace('/?t=' + Date.now()) // 关键：让首页路由守卫检测到变化
+}
 
 /** 待审核数量 */
 const pendingJobCount = ref(0)
@@ -183,6 +188,15 @@ const goJobPublish = () => {
 
 onMounted(() => {
   fetchOverviewData()
+  // 监听全局刷新指令
+  proxy.$eventBus.on('refreshTimeline', fetchOverviewData)
+})
+onUnmounted(() => {
+  proxy.$eventBus.off('refreshTimeline', fetchOverviewData)
+})
+onBeforeRouteUpdate((to, from, next) => {
+  if (to.path === '/') fetchOverviewData()
+  next()
 })
 
 /** 静态示例统计卡片 */
