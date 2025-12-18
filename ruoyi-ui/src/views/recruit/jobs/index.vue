@@ -325,6 +325,57 @@ const data = reactive({
     companyName: [
       { required: true, message: "公司名称不能为空", trigger: "blur" }
     ],
+    department: [
+      { required: true, message: "所属部门不能为空", trigger: "blur" }
+    ],
+    title: [
+      { required: true, message: "岗位名称不能为空", trigger: "blur" }
+    ],
+    type: [
+      { required: true, message: "岗位类别不能为空", trigger: "change" }
+    ],
+    description: [
+      { required: true, message: "岗位描述不能为空", trigger: "blur" }
+    ],
+    techRequirements: [
+      { required: true, message: "岗位要求不能为空", trigger: "blur" }
+    ],
+    bonusPoints: [
+      { required: true, message: "岗位加分项不能为空", trigger: "blur" }
+    ],
+    minSalary: [
+      { required: true, message: "最少薪资不能为空", trigger: "blur" }
+    ],
+    maxSalary: [
+      { required: true, message: "最多薪资不能为空", trigger: "blur" }
+    ],
+    provinceId: [
+      { required: true, message: "省份不能为空", trigger: "change" }
+    ],
+    cityId: [
+      { required: true, message: "城市不能为空", trigger: "change" }
+    ],
+    addressDetail: [
+      { required: true, message: "详细地址不能为空", trigger: "blur" }
+    ],
+    workNature: [
+      { required: true, message: "岗位性质不能为空", trigger: "change" }
+    ],
+    requiredDegree: [
+      { required: true, message: "学历要求不能为空", trigger: "change" }
+    ],
+    headcount: [
+      { required: true, message: "招聘人数不能为空", trigger: "blur" }
+    ],
+    requiredStartDate: [
+      { required: true, message: "要求入职时间不能为空", trigger: "blur" }
+    ],
+    deadline: [
+      { required: true, message: "招聘截止日期不能为空", trigger: "blur" }
+    ],
+    status: [
+      { required: true, message: "岗位状态不能为空", trigger: "change" }
+    ]
   }
 })
 

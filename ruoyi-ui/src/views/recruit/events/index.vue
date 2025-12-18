@@ -206,14 +206,20 @@ const data = reactive({
     eventTitle: [
       { required: true, message: "活动标题不能为空", trigger: "blur" }
     ],
+    eventSummary: [
+      { required: true, message: "活动详情不能为空", trigger: "blur" }
+    ],
     eventStartTime: [
       { required: true, message: "活动开始时间不能为空", trigger: "blur" }
     ],
-    createdAt: [
-      { required: true, message: "创建时间不能为空", trigger: "blur" }
+    eventEndTime: [
+      { required: true, message: "活动结束时间不能为空", trigger: "blur" }
     ],
-    updatedAt: [
-      { required: true, message: "更新时间不能为空", trigger: "blur" }
+    eventLocation: [
+      { required: true, message: "活动地点不能为空", trigger: "blur" }
+    ],
+    targetAudience: [
+      { required: true, message: "面向对象不能为空", trigger: "blur" }
     ]
   }
 })

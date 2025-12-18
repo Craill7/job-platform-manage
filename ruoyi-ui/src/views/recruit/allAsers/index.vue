@@ -147,7 +147,7 @@
           <el-input v-model="form.email" placeholder="请输入用户邮箱" />
         </el-form-item>
         <el-form-item label="用户角色" prop="role">
-          <el-select v-model="form.role" placeholder="请选择用户角色">
+          <el-select v-model="form.role" placeholder="请选择用户角色" @change="handleRoleChange">
             <el-option
               v-for="dict in biz_user_role"
               :key="dict.value"
@@ -165,19 +165,6 @@
               :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item 
-          v-if="form.id != null" 
-          label="新密码" 
-          prop="password"
-        >
-          <el-input 
-            v-model="form.password" 
-            type="password" 
-            placeholder="留空则不修改密码，输入新密码将更新密码" 
-            show-password
-            clearable
-          />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -207,6 +194,38 @@ const total = ref(0)
 const title = ref("")
 const daterangeCreatedAt = ref([])
 
+// 验证学生邮箱必须以 sysu.edu.cn 结尾
+const validateEmailForStudent = (rule, value, callback) => {
+  if (!value) {
+    callback()
+    return
+  }
+  
+  // 检查当前选择的角色是否为学生
+  // 通过查找字典中 label 包含"学生"的项来判断
+  const studentRole = biz_user_role.value.find(dict => {
+    const label = dict.label || ''
+    return label.includes('学生') || label.includes('student') || label.includes('Student')
+  })
+  
+  // 如果选择了学生角色，验证邮箱后缀
+  if (studentRole && form.value.role === parseInt(studentRole.value)) {
+    if (!value.endsWith('sysu.edu.cn')) {
+      callback(new Error('学生角色的邮箱必须以 @sysu.edu.cn 结尾'))
+      return
+    }
+  }
+  
+  callback()
+}
+
+// 角色改变时重新验证邮箱
+function handleRoleChange() {
+  if (form.value.email) {
+    proxy.$refs["allAsersRef"].validateField('email')
+  }
+}
+
 const data = reactive({
   form: {},
   queryParams: {
@@ -219,22 +238,16 @@ const data = reactive({
     createdAt: null,
   },
   rules: {
-    password: [
-      { 
-        validator: (rule, value, callback) => {
-          // 只在修改模式下且密码不为空时验证
-          if (form.value.id != null && value && value.trim() !== '') {
-            if (value.length < 6) {
-              callback(new Error('密码至少需要 6 位'))
-            } else {
-              callback()
-            }
-          } else {
-            callback()
-          }
-        }, 
-        trigger: 'blur' 
-      }
+    email: [
+      { required: true, message: "用户邮箱不能为空", trigger: "blur" },
+      { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] },
+      { validator: validateEmailForStudent, trigger: ["blur", "change"] }
+    ],
+    role: [
+      { required: true, message: "用户角色不能为空", trigger: "change" }
+    ],
+    status: [
+      { required: true, message: "账户状态不能为空", trigger: "change" }
     ]
   }
 })
@@ -267,7 +280,6 @@ function reset() {
   form.value = {
     id: null,
     email: null,
-    password: null,
     passwordHash: null,
     role: null,
     status: null,
@@ -320,20 +332,14 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["allAsersRef"].validate(valid => {
     if (valid) {
-      // 如果是修改且密码为空，则删除password字段，不更新密码
-      const submitData = { ...form.value }
-      if (submitData.id != null && (!submitData.password || submitData.password.trim() === '')) {
-        delete submitData.password
-      }
-      
       if (form.value.id != null) {
-        updateAllAsers(submitData).then(response => {
+        updateAllAsers(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
-        addAllAsers(submitData).then(response => {
+        addAllAsers(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功")
           open.value = false
           getList()

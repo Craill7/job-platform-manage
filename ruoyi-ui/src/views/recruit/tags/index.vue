@@ -153,9 +153,6 @@ const data = reactive({
     ],
     categoryId: [
       { required: true, message: "所属分类不能为空", trigger: "blur" }
-    ],
-    createdAt: [
-      { required: true, message: "创建时间不能为空", trigger: "blur" }
     ]
   }
 })

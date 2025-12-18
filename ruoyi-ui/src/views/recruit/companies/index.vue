@@ -215,6 +215,36 @@ const data = reactive({
     createdAt: null
   },
   rules: {
+    userId: [
+      { required: true, message: "关联用户ID不能为空", trigger: "blur" }
+    ],
+    companyName: [
+      { required: true, message: "公司名称不能为空", trigger: "blur" }
+    ],
+    description: [
+      { required: true, message: "公司介绍不能为空", trigger: "blur" }
+    ],
+    logoUrl: [
+      { required: true, message: "公司Logo不能为空", trigger: "blur" }
+    ],
+    industryId: [
+      { required: true, message: "行业领域不能为空", trigger: "change" }
+    ],
+    natureId: [
+      { required: true, message: "企业性质不能为空", trigger: "change" }
+    ],
+    companyScaleId: [
+      { required: true, message: "公司规模不能为空", trigger: "change" }
+    ],
+    companyAddress: [
+      { required: true, message: "公司地址不能为空", trigger: "blur" }
+    ],
+    contactPersonName: [
+      { required: true, message: "联系人姓名不能为空", trigger: "blur" }
+    ],
+    contactPersonPhone: [
+      { required: true, message: "联系人电话不能为空", trigger: "blur" }
+    ]
   }
 })
 

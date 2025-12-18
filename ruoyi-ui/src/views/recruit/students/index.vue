@@ -209,6 +209,42 @@ const data = reactive({
     jobSeekingStatus: null,
   },
   rules: {
+    userId: [
+      { required: true, message: "用户ID不能为空", trigger: "blur" }
+    ],
+    avatarUrl: [
+      { required: true, message: "头像不能为空", trigger: "blur" }
+    ],
+    fullName: [
+      { required: true, message: "姓名不能为空", trigger: "blur" }
+    ],
+    gender: [
+      { required: true, message: "性别不能为空", trigger: "change" }
+    ],
+    studentId: [
+      { required: true, message: "学号不能为空", trigger: "blur" }
+    ],
+    phoneNumber: [
+      { required: true, message: "电话不能为空", trigger: "blur" }
+    ],
+    dateOfBirth: [
+      { required: true, message: "生日不能为空", trigger: "blur" }
+    ],
+    jobSeekingStatus: [
+      { required: true, message: "求职状态不能为空", trigger: "change" }
+    ],
+    expectedPosition: [
+      { required: true, message: "期望职位不能为空", trigger: "blur" }
+    ],
+    expectedMinSalary: [
+      { required: true, message: "期望最少薪资不能为空", trigger: "blur" }
+    ],
+    expectedMaxSalary: [
+      { required: true, message: "期望最多薪资不能为空", trigger: "blur" }
+    ],
+    skillsSummary: [
+      { required: true, message: "技能掌握不能为空", trigger: "blur" }
+    ]
   }
 })
 
