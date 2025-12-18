@@ -1,4 +1,4 @@
-<template>
+现在需要把活动动态里显示的都改成支持富文本显示，<template>
   <div class="app-container home">
     <!-- 顶部 Hero 区 -->
     <div class="home-hero">
@@ -119,14 +119,9 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import request from '@/utils/request'
-import { onBeforeRouteUpdate } from 'vue-router'  
 
 const router = useRouter()
 const version = ref('1.0.0')
-const onSubmit = async () => {
-  await saveActivity(form)            // 你的保存接口
-  router.replace('/?t=' + Date.now()) // 关键：让首页路由守卫检测到变化
-}
 
 /** 待审核数量 */
 const pendingJobCount = ref(0)
@@ -188,15 +183,6 @@ const goJobPublish = () => {
 
 onMounted(() => {
   fetchOverviewData()
-  // 监听全局刷新指令
-  proxy.$eventBus.on('refreshTimeline', fetchOverviewData)
-})
-onUnmounted(() => {
-  proxy.$eventBus.off('refreshTimeline', fetchOverviewData)
-})
-onBeforeRouteUpdate((to, from, next) => {
-  if (to.path === '/') fetchOverviewData()
-  next()
 })
 
 /** 静态示例统计卡片 */
