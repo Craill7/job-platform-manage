@@ -3,36 +3,37 @@ $blue: #324157;
 $light-blue: #333c46;
 $red: #C03639;
 $pink: #E65D6E;
-$green: #30B08F;
+$green: #396C2E;
+$panGreen: #396C2E;
 $tiffany: #4AB7BD;
 $yellow: #FEC171;
-$panGreen: #30B08F;
+
 
 // 默认主题变量
-$menuText: #bfcbd9;
-$menuActiveText: #409eff;
-$menuBg: #304156;
-$menuHover: #263445;
+$menuText:#374151;
+$menuBg: #F4F6F2;
+$menuHover: #E8EFE5;
+$menuActiveText: #2A5E23;
 
 // 浅色主题theme-light
 $menuLightBg: #ffffff;
 $menuLightHover: #f0f1f5;
 $menuLightText: #303133;
-$menuLightActiveText: #409EFF;
+$menuLightActiveText: #396C2E;
 
 // 基础变量
 $base-sidebar-width: 200px;
 $sideBarWidth: 200px;
 
 // 菜单暗色变量
-$base-menu-color: #bfcbd9;
-$base-menu-color-active: #f4f4f5;
-$base-menu-background: #304156;
-$base-sub-menu-background: #1f2d3d;
-$base-sub-menu-hover: #001528;
+$base-menu-color: #374151;
+$base-menu-color-active:  #2A5E23;
+$base-menu-background: #F4F6F2;
+$base-sub-menu-background: #EEF3EA;
+$base-sub-menu-hover: #E0EAD8;
 
 // 组件变量
-$--color-primary: #409EFF;
+$--color-primary: #396C2E;
 $--color-success: #67C23A;
 $--color-warning: #E6A23C;
 $--color-danger: #F56C6C;
@@ -71,13 +72,21 @@ $--color-info: #909399;
   --sidebar-bg: #{$menuBg};
   --sidebar-text: #{$menuText};
   --menu-hover: #{$menuHover};
-  
+
   --navbar-bg: #ffffff;
   --navbar-text: #303133;
-  
+
   /* splitpanes default-theme 变量 */
   --splitpanes-default-bg: #ffffff;
-
+        /* 覆盖 Element 主色（蓝 → 绿） */
+        --el-color-primary: #2A5E23;
+        --el-color-primary-light-3: #5A8F52;
+        --el-color-primary-light-5: #8FBF88;
+        --el-color-primary-light-7: #CFE5CB;
+        --el-color-primary-light-9: #F0F7EE;
+    
+        /* 可选：成功态稍微统一偏绿 */
+        --el-color-success: #396C2E;
 }
 
 // 暗黑模式变量
@@ -89,12 +98,17 @@ html.dark {
   --el-text-color-regular: #d0d0d0;
   --el-border-color: #434343;
   --el-border-color-light: #434343;
+  --el-color-primary: #{$--color-primary};
 
-  /* 侧边栏 */
+  /* ✅ 暗黑模式侧边栏：必须回到深色底 + 浅色字 */
   --sidebar-bg: #141414;
-  --sidebar-text: #ffffff;
+  --sidebar-text: rgba(255, 255, 255, 0.86);
   --menu-hover: #2d2d2d;
-  --menu-active-text: #{$menuActiveText};
+  --menu-active-text: #ffffff;
+        /* 暗黑模式主色 */
+        --el-color-primary: #5FAF55;
+        --el-color-primary-light-3: #7FCF77;
+        --el-color-primary-light-5: #9FE39A;
 
   /* 顶部导航栏 */
   --navbar-bg: #141414;
@@ -109,6 +123,9 @@ html.dark {
   --tags-item-hover: #2d2d2d;
   --tags-close-hover: #64666a;
 
+  /* splitpanes default-theme 暗黑模式变量 */
+  --splitpanes-default-bg: #141414;
+
   /* splitpanes 组件暗黑模式变量 */
   --splitpanes-bg: #141414;
   --splitpanes-border: #303030;
@@ -119,7 +136,7 @@ html.dark {
   --blockquote-bg: #1d1e1f;
   --blockquote-border: #303030;
   --blockquote-text: #d0d0d0;
-  
+
   /* Cron 时间表达式 模式变量 */
   --cron-border: #303030;
 
@@ -127,20 +144,40 @@ html.dark {
   --splitpanes-default-bg: #141414;
 
   /* 侧边栏菜单覆盖 */
-   .sidebar-container {
-    .el-menu-item, .menu-title {
-      color: var(--el-text-color-regular);
-    }
-    & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
-    & .theme-dark .el-sub-menu .el-menu-item {
-      background-color: var(--el-bg-color) !important;
-    }
+  .sidebar-container {
+/* ===== 米色侧边栏文字样式 ===== */
+  .el-menu-item,
+  .el-sub-menu__title,
+  .menu-title {
+    color: #374151 !important; // 深灰文字
+  }
+
+  /* hover */
+  .el-menu-item:hover,
+  .el-sub-menu__title:hover {
+    background-color: #E8EFE5 !important;
+  }
+
+  /* 当前选中 */
+  .el-menu-item.is-active,
+  .el-sub-menu.is-active>.el-sub-menu__title {
+    background-color: #DDE8D6 !important;
+    color: #2A5E23 !important;
+    font-weight: 600;
+  }
+
+  /* 选中图标 */
+  .el-menu-item.is-active i,
+  .el-menu-item.is-active .svg-icon {
+    color: #2A5E23 !important;
+  }
   }
 
   /* 顶部栏栏菜单覆盖 */
   .el-menu--horizontal {
     .el-menu-item {
       &:not(.is-disabled) {
+
         &:hover,
         &:focus {
           background-color: var(--navbar-hover) !important;
@@ -180,7 +217,8 @@ html.dark {
     --el-table-border-color: var(--el-border-color-light) !important;
     --el-table-row-hover-bg-color: var(--el-bg-color-overlay) !important;
 
-    .el-table__header-wrapper, .el-table__fixed-header-wrapper {
+    .el-table__header-wrapper,
+    .el-table__fixed-header-wrapper {
       th {
         background-color: var(--el-bg-color-overlay, #f8f8f9) !important;
         color: var(--el-text-color-regular, #515a6e);
@@ -190,7 +228,7 @@ html.dark {
 
   /* 树组件高亮样式覆盖 */
   .el-tree {
-    .el-tree-node.is-current > .el-tree-node__content {
+    .el-tree-node.is-current>.el-tree-node__content {
       background-color: var(--el-bg-color-overlay) !important;
       color: var(--el-color-primary);
     }
@@ -199,9 +237,10 @@ html.dark {
       background-color: var(--el-bg-color-overlay);
     }
   }
-  
+
   /* 下拉菜单样式覆盖 */
-  .el-dropdown-menu__item:not(.is-disabled):focus, .el-dropdown-menu__item:not(.is-disabled):hover{
+  .el-dropdown-menu__item:not(.is-disabled):focus,
+  .el-dropdown-menu__item:not(.is-disabled):hover {
     background-color: var(--navbar-hover) !important;
   }
 
@@ -211,11 +250,16 @@ html.dark {
     border-left-color: var(--blockquote-border) !important;
     color: var(--blockquote-text) !important;
   }
-  
+
   /* 时间表达式标题样式覆盖 */
   .popup-result .title {
     background: var(--cron-border);
   }
 
+  .el-tag--primary {
+  background-color: var(--el-color-primary-light-9);
+  border-color: var(--el-color-primary-light-7);
+  color: var(--el-color-primary);
 }
 
+}

@@ -10,7 +10,7 @@
   }
 
   .sidebarHide {
-    margin-left: 0!important;
+    margin-left: 0 !important;
   }
 
   .sidebar-container {
@@ -24,8 +24,11 @@
     left: 0;
     z-index: 1001;
     overflow: hidden;
-    -webkit-box-shadow: 2px 0 6px rgba(0,21,41,.35);
+    -webkit-box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
     box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
+
+    /* ✅ 侧边栏背景跟随 CSS 变量（亮色/暗黑自动适配） */
+    background: var(--sidebar-bg) !important;
 
     // reset element-ui css
     .horizontal-collapse-transition {
@@ -68,9 +71,13 @@
       border: none;
       height: 100%;
       width: 100% !important;
+
+      /* ✅ 菜单背景跟随侧边栏变量 */
+      background-color: var(--sidebar-bg) !important;
     }
 
-    .el-menu-item, .menu-title {
+    .el-menu-item,
+    .menu-title {
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
@@ -80,16 +87,21 @@
       display: inline-block !important;
     }
 
-    // menu hover
+    /* ===============================
+       ✅ 菜单文字/选中态：跟随 CSS 变量
+       =============================== */
+    .el-menu-item,
+    .el-sub-menu__title,
+    .menu-title {
+      color: var(--sidebar-text) !important;
+    }
+
+    /* hover（亮色是淡绿，暗黑是深灰，由变量控制） */
     .sub-menu-title-noDropdown,
     .el-sub-menu__title {
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        background-color: var(--menu-hover) !important;
       }
-    }
-
-    & .theme-dark .is-active > .el-sub-menu__title {
-      color: vars.$base-menu-color-active !important;
     }
 
     & .nest-menu .el-sub-menu>.el-sub-menu__title,
@@ -97,16 +109,36 @@
       min-width: vars.$base-sidebar-width !important;
 
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        background-color: var(--menu-hover) !important;
       }
     }
 
-    & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
-    & .theme-dark .el-sub-menu .el-menu-item {
-      background-color: vars.$base-sub-menu-background;
+    /* 当前选中 */
+    .el-menu-item.is-active,
+    .el-sub-menu.is-active>.el-sub-menu__title {
+      background-color: color-mix(in srgb, var(--menu-hover) 80%, transparent) !important;
+      color: var(--menu-active-text, var(--el-color-primary)) !important;
+      font-weight: 600;
+    }
 
-      &:hover {
-        background-color: vars.$base-sub-menu-hover !important;
+    /* 选中时图标同步 */
+    .el-menu-item.is-active .svg-icon,
+    .el-menu-item.is-active i,
+    .el-sub-menu.is-active>.el-sub-menu__title .svg-icon,
+    .el-sub-menu.is-active>.el-sub-menu__title i {
+      color: var(--menu-active-text, var(--el-color-primary)) !important;
+    }
+
+    /* ✅ 暗黑主题下：子菜单背景也跟随暗黑变量（你之前用 vars 会把浅色带进暗黑） */
+    html.dark & {
+
+      & .nest-menu .el-sub-menu>.el-sub-menu__title,
+      & .el-sub-menu .el-menu-item {
+        background-color: var(--sidebar-bg) !important;
+
+        &:hover {
+          background-color: var(--menu-hover) !important;
+        }
       }
     }
   }
@@ -142,7 +174,6 @@
         .svg-icon {
           margin-left: 20px;
         }
-
       }
     }
 
@@ -156,6 +187,7 @@
             visibility: hidden;
             display: inline-block;
           }
+
           &>i {
             height: 0;
             width: 0;
@@ -212,8 +244,7 @@
   .nest-menu .el-sub-menu>.el-sub-menu__title,
   .el-menu-item {
     &:hover {
-      // you can use $sub-menuHover
-      background-color: rgba(0, 0, 0, 0.06) !important;
+      background-color: var(--menu-hover) !important;
     }
   }
 

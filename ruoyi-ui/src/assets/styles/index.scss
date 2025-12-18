@@ -5,6 +5,11 @@
 @use './btn.scss';
 @use './ruoyi.scss';
 
+/* 全局主题色：Element Plus 主色 */
+:root {
+  --el-color-primary: #2A5E23;
+}
+
 body {
   height: 100%;
   margin: 0;
@@ -111,16 +116,16 @@ aside {
   -moz-osx-font-smoothing: grayscale;
 
   a {
-    color: #337ab7;
+    color: #2A5E23;
     cursor: pointer;
 
     &:hover {
-      color: rgb(32, 160, 255);
+      color: #396C2E;
     }
   }
 }
 
-//main-container全局样式
+/* main-container 全局样式 */
 .app-container {
   padding: 20px;
 }
@@ -131,9 +136,10 @@ aside {
 }
 
 .text-center {
-  text-align: center
+  text-align: center;
 }
 
+/* 顶部子导航（如果你用得到） */
 .sub-navbar {
   height: 50px;
   line-height: 50px;
@@ -142,17 +148,14 @@ aside {
   text-align: right;
   padding-right: 20px;
   transition: 600ms ease position;
-  background: linear-gradient(90deg, rgba(32, 182, 249, 1) 0%, rgba(32, 182, 249, 1) 0%, rgba(33, 120, 241, 1) 100%, rgba(33, 120, 241, 1) 100%);
+  background: linear-gradient(90deg, #2A5E23 0%, #396C2E 100%);
 
   .subtitle {
     font-size: 20px;
     color: #fff;
   }
 
-  &.draft {
-    background: #d0d0d0;
-  }
-
+  &.draft,
   &.deleted {
     background: #d0d0d0;
   }
@@ -160,11 +163,11 @@ aside {
 
 .link-type,
 .link-type:focus {
-  color: #337ab7;
+  color: #2A5E23;
   cursor: pointer;
 
   &:hover {
-    color: rgb(32, 160, 255);
+    color: #396C2E;
   }
 }
 
@@ -176,4 +179,112 @@ aside {
     vertical-align: middle;
     margin-bottom: 10px;
   }
+}
+
+/* ===============================
+   Dark mode: Navbar / Topbar 适配
+   =============================== */
+html.dark {
+  .navbar {
+    background: #141414 !important;
+    border-bottom: 1px solid #303030 !important;
+    box-shadow: none !important;
+  }
+
+  .navbar .title,
+  .navbar .logo-title,
+  .navbar .left-menu,
+  .navbar .right-menu {
+    color: #ffffff !important;
+  }
+
+  .navbar .right-menu-item,
+  .navbar .right-menu-item i,
+  .navbar .hamburger,
+  .navbar .hamburger svg {
+    color: #d0d0d0 !important;
+    fill: #d0d0d0 !important;
+  }
+
+  .navbar .right-menu-item:hover,
+  .navbar .hamburger:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .el-breadcrumb__inner,
+  .el-breadcrumb__inner a,
+  .el-breadcrumb__separator {
+    color: rgba(255, 255, 255, 0.75) !important;
+  }
+
+  .el-breadcrumb__inner a:hover {
+    color: #ffffff !important;
+  }
+}
+
+/* ===============================
+   Dark mode: TagsView 适配（不突兀）
+   注意：这段是全局覆盖 scoped 的 tags
+   =============================== */
+html.dark {
+  .tags-view-container {
+    background: #141414 !important;
+    border-bottom: 1px solid #2a2a2a !important;
+    box-shadow: none !important;
+  }
+
+  .tags-view-container .tags-view-item {
+    background: #1d1e1f !important;
+    border: 1px solid #2a2a2a !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+  }
+
+  .tags-view-container .tags-view-item:hover {
+    background: #232425 !important;
+    border-color: #343434 !important;
+    color: #ffffff !important;
+  }
+
+  .tags-view-container .tags-view-item.active {
+    background: #1a1b1c !important;
+    border-color: rgba(42, 94, 35, 0.65) !important;
+    color: #9be28b !important;
+    font-weight: 700;
+  }
+
+  .tags-view-container .tags-view-item.active::before {
+    background: #2A5E23 !important;
+  }
+
+  .tags-view-container .tags-view-item .el-icon-close {
+    color: rgba(255, 255, 255, 0.55) !important;
+  }
+
+  .tags-view-container .tags-view-item .el-icon-close:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+  }
+
+  .tags-view-container .contextmenu {
+    background: #1d1e1f !important;
+    border: 1px solid #303030 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .tags-view-container .contextmenu li:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+}
+/* ===============================
+   Element Plus：Checkbox 选中态改主色绿
+   =============================== */
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.el-checkbox__input.is-checked+.el-checkbox__label {
+  color: var(--el-color-primary) !important;
 }

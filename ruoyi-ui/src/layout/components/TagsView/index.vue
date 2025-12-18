@@ -88,11 +88,7 @@ function isActive(r) {
 }
 
 function activeStyle(tag) {
-  if (!isActive(tag)) return {}
-  return {
-    "background-color": theme.value,
-    "border-color": theme.value
-  }
+ return {}
 }
 
 function isAffix(tag) {
@@ -265,7 +261,7 @@ function handleScroll() {
   width: 100%;
   background: var(--tags-bg, #fff);
   border-bottom: 1px solid var(--tags-item-border, #d8dce5);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .12), 0 0 3px rgba(0, 0, 0, .04);
 
   .tags-view-wrapper {
     .tags-view-item {
@@ -282,22 +278,20 @@ function handleScroll() {
       margin-left: 5px;
       margin-top: 4px;
 
-      &:first-of-type {
-        margin-left: 15px;
-      }
+      &:first-of-type { margin-left: 15px; }
+      &:last-of-type { margin-right: 15px; }
 
-      &:last-of-type {
-        margin-right: 15px;
-      }
+      /* 亮色模式选中：米色 + 深绿 */
+&.active {
+  background-color: #F4F6F2 !important;
+  color: #2A5E23 !important;
+  border-color: #E8EFE5 !important;
+  font-weight: 600;
 
-      &.active {
-        background-color: #42b983;
-        color: #fff;
-        border-color: #42b983;
 
         &::before {
           content: '';
-          background: #fff;
+          background: #2A5E23 !important;
           display: inline-block;
           width: 8px;
           height: 8px;
@@ -324,7 +318,7 @@ function handleScroll() {
     font-size: 12px;
     font-weight: 400;
     color: var(--tags-item-text, #333);
-    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, .3);
     border: 1px solid var(--el-border-color-light, #e4e7ed);
 
     li {
@@ -332,13 +326,13 @@ function handleScroll() {
       padding: 7px 16px;
       cursor: pointer;
 
-      &:hover {
-        background: var(--tags-item-hover, #eee);
-      }
+      &:hover { background: var(--tags-item-hover, #eee); }
     }
   }
 }
+
 </style>
+
 
 <style lang="scss">
 //reset element css of el-icon-close
@@ -368,4 +362,48 @@ function handleScroll() {
     }
   }
 }
+/* ===== TagsView dark mode 强覆盖（更精准，专治突兀白块） ===== */
+html.dark #tags-view-container.tags-view-container,
+body.dark #tags-view-container.tags-view-container,
+.dark #tags-view-container.tags-view-container {
+  background: #141414 !important;
+  border-bottom: 1px solid #2a2a2a !important;
+  box-shadow: none !important;
+}
+
+html.dark #tags-view-container .tags-view-wrapper a.tags-view-item,
+body.dark #tags-view-container .tags-view-wrapper a.tags-view-item,
+.dark #tags-view-container .tags-view-wrapper a.tags-view-item {
+  background: #1d1e1f !important;
+  border: 1px solid #2a2a2a !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  border-radius: 4px;
+}
+
+html.dark #tags-view-container .tags-view-wrapper a.tags-view-item:hover,
+body.dark #tags-view-container .tags-view-wrapper a.tags-view-item:hover,
+.dark #tags-view-container .tags-view-wrapper a.tags-view-item:hover {
+  background: #232425 !important;
+  border-color: #343434 !important;
+  color: #fff !important;
+}
+
+/* active：深底 + 绿字 + 绿边（不刺眼） */
+html.dark #tags-view-container .tags-view-wrapper a.tags-view-item.active,
+body.dark #tags-view-container .tags-view-wrapper a.tags-view-item.active,
+.dark #tags-view-container .tags-view-wrapper a.tags-view-item.active {
+  background: #1a1b1c !important;
+  border-color: rgba(42, 94, 35, 0.65) !important;
+  color: #9be28b !important;
+  font-weight: 700 !important;
+}
+
+/* active 小圆点 */
+html.dark #tags-view-container .tags-view-wrapper a.tags-view-item.active::before,
+body.dark #tags-view-container .tags-view-wrapper a.tags-view-item.active::before,
+.dark #tags-view-container .tags-view-wrapper a.tags-view-item.active::before {
+  background: #2A5E23 !important;
+}
+
+
 </style>

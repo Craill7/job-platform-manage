@@ -151,8 +151,12 @@
 /** 表格更多操作下拉样式 */
 .el-table .el-dropdown-link {
   cursor: pointer;
-  color: #409EFF;
+  color: var(--el-color-primary);
   margin-left: 10px;
+}
+.el-table .el-dropdown-link:hover {
+  color: var(--el-color-primary);
+  opacity: 0.9;
 }
 
 .el-table .el-dropdown, .el-icon-arrow-down {
@@ -272,11 +276,10 @@
   overflow: hidden;
 }
 
-/* 拖拽列样式 */
-.sortable-ghost{
+.sortable-ghost {
   opacity: .8;
-  color: #fff!important;
-  background: #42b983!important;
+  color: #fff !important;
+  background: var(--el-color-primary) !important;
 }
 
 /* 表格右侧工具栏样式 */
@@ -287,4 +290,169 @@
 /* 分割面板样式 */
 .splitpanes.default-theme .splitpanes__pane {
   background-color: var(--splitpanes-default-bg) !important;
+}
+/* ===============================
+   顶部面包屑：米色 + 深绿
+   =============================== */
+.breadcrumb-container {
+  background: #F4F6F2;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.el-breadcrumb__separator {
+  color: rgba(55, 65, 81, 0.55) !important;
+}
+
+.el-breadcrumb__inner a,
+.el-breadcrumb__inner.is-link {
+  color: #2A5E23 !important;
+  font-weight: 600;
+}
+
+.el-breadcrumb__inner a:hover,
+.el-breadcrumb__inner.is-link:hover {
+  color: #396C2E !important;
+  opacity: 0.95;
+}
+
+/* 当前页（最后一段）颜色 */
+.el-breadcrumb__inner {
+  color: #374151 !important;
+}
+
+/* ===============================
+   顶部 Tabs（标签页）兜底（真正样式以 TagsView/index.vue 为准）
+   =============================== */
+.tags-view-container {
+  background: #ffffff;
+}
+
+/* ===============================
+   顶部 Header（Navbar）统一为白色 + 左上角标题清晰
+   =============================== */
+
+/* 顶部整体背景 */
+.navbar {
+  background: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* 顶部右侧 icon / 用户名 */
+.navbar .right-menu-item,
+.navbar .right-menu-item i,
+.navbar .avatar-container .user-name {
+  color: #374151 !important;
+}
+
+.navbar .right-menu-item:hover,
+.navbar .right-menu-item:hover i {
+  color: #2A5E23 !important;
+}
+
+/* ✅ 左上角“系统名称”最稳的写法：把 logo 区域的文字都强制成深色 */
+.sidebar-logo-container,
+.sidebar-logo-container * {
+  color: #2A5E23 !important;
+  /* 你想用深灰也可以换 #1F2937 */
+}
+
+/* 如果你的项目叫 logo-container / navbar-logo，也一起兜底 */
+.logo-container,
+.logo-container *,
+.navbar-logo,
+.navbar-logo * {
+  color: #2A5E23 !important;
+}
+
+/* 让 logo 区背景也保持白色（防止被旧主题染色） */
+.sidebar-logo-container {
+  background: #ffffff !important;
+}
+/* ===============================
+   Dark: 顶部 Navbar / 面包屑区域适配
+   放全局：src/assets/styles/index.scss 或 ruoyi.scss
+   =============================== */
+html.dark {
+
+  /* 顶部整条 */
+  .navbar {
+    background: #141414 !important;
+    border-bottom: 1px solid #2a2a2a !important;
+    box-shadow: none !important;
+  }
+
+  /* 左侧（汉堡按钮那块） */
+  .navbar .hamburger-container,
+  .navbar .hamburger {
+    background: transparent !important;
+  }
+
+  /* 右侧图标/头像区域颜色 */
+  .navbar .right-menu-item,
+  .navbar .right-menu-item i,
+  .navbar .hamburger svg {
+    color: rgba(255, 255, 255, .78) !important;
+    fill: rgba(255, 255, 255, .78) !important;
+  }
+
+  .navbar .right-menu-item:hover,
+  .navbar .hamburger-container:hover {
+    background: rgba(255, 255, 255, .06) !important;
+  }
+
+  /* 面包屑容器（你截图里那块白色胶囊） */
+  .navbar .breadcrumb-container,
+  .breadcrumb-container {
+    background: transparent !important;
+    /* 关键：去掉白底 */
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* 面包屑文字 */
+  .el-breadcrumb__inner,
+  .el-breadcrumb__inner a,
+  .el-breadcrumb__separator {
+    color: rgba(255, 255, 255, .72) !important;
+  }
+
+  /* 面包屑可点击项 hover/高亮用绿 */
+  .el-breadcrumb__inner a:hover,
+  .el-breadcrumb__inner.is-link:hover {
+    color: #9be28b !important;
+  }
+
+  /* 最后一段（当前页）更亮一点 */
+  .el-breadcrumb__inner:last-child {
+    color: rgba(255, 255, 255, .9) !important;
+  }
+}
+/* ===============================
+   Dark：左上角 Logo 区（白底问题）
+   =============================== */
+html.dark {
+
+  /* Logo 整块容器 */
+  .sidebar-logo-container,
+  .sidebar-logo-container .sidebar-logo-link,
+  .sidebar-logo-container .logo-link,
+  .sidebar-logo-container .logo {
+    background: #141414 !important;
+    border-bottom: 1px solid #2a2a2a !important;
+    box-shadow: none !important;
+  }
+
+  /* 系统名文字 */
+  .sidebar-logo-container .logo-title,
+  .sidebar-logo-container .title {
+    color: #ffffff !important;
+  }
+
+  /* 图片/圆形徽章周围别留白边 */
+  .sidebar-logo-container img,
+  .sidebar-logo-container .logo img,
+  .sidebar-logo-container .sidebar-logo {
+    background: transparent !important;
+  }
 }

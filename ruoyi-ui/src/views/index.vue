@@ -1,4 +1,4 @@
-现在需要把活动动态里显示的都改成支持富文本显示，<template>
+<template>
   <div class="app-container home">
     <!-- 顶部 Hero 区 -->
     <div class="home-hero">
@@ -83,7 +83,8 @@
               placement="top"
             >
               <p class="timeline-title">{{ item.title }}</p>
-              <p class="timeline-desc" v-html="item.desc" />
+              <p class="timeline-desc">{{ item.desc }}</p>
+
             </el-timeline-item>
           </el-timeline>
         </el-card>
@@ -147,13 +148,16 @@ const timeline = ref([])
 
     // 更新最新动态（招聘活动）
     // 对时间进行排序，按日期从最近到最远
-    const sortedTimeline = data.latestTimeline.sort((a, b) => {
-      return new Date(b.time) - new Date(a.time); // 按时间排序，最新的排前面
-    });
+const sortedTimeline = (data.latestTimeline || []).sort((a, b) => {
+  return new Date(b.time) - new Date(a.time)
+})
 
-    // 只取最近的 5 条记录
-    timeline.value = sortedTimeline.slice(0, 5);
-    
+// 只取最近 5 条 + desc 清洗成“适量文字”
+timeline.value = sortedTimeline.slice(0, 5).map(it => ({
+  ...it,
+  desc: clamp(toPlainText(it.desc), 60) // 60 可改 40/80
+}))
+
     // 更新统计卡片
     statCards.value = [
       { label: '当前招聘', value: data.currentRecruitCount, desc: '正在进行的岗位数量' },
@@ -164,6 +168,16 @@ const timeline = ref([])
     console.error('获取数据失败', e)
   }
 }
+
+// 1) 富文本 -> 纯文本（会自动去掉 img、a、p 等所有标签）
+const toPlainText = (html = '') => {
+  const div = document.createElement('div')
+  div.innerHTML = html
+  return (div.textContent || div.innerText || '').replace(/\s+/g, ' ').trim()
+}
+
+// 2) 文字截断，避免太长
+const clamp = (s = '', max = 60) => (s.length > max ? s.slice(0, max) + '…' : s)
 
 
 /** 跳转到岗位审核页面 */
@@ -420,4 +434,21 @@ $primary-gradient: linear-gradient(135deg, #2a5e23, #4a7c3a);
   .home-hero { flex-direction: column; }
   .hero-right { justify-content: flex-start; }
 }
+
+/* 兜底：时间线区域不显示任何图片/媒体 */
+:deep(.el-timeline .timeline-desc img),
+:deep(.el-timeline .timeline-desc video),
+:deep(.el-timeline .timeline-desc iframe) {
+  display: none !important;
+}
+
+/* “适量文字”：最多两行，超出省略号 */
+.timeline-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;   /* 想更短就改 1，想更多改 3 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
 </style>

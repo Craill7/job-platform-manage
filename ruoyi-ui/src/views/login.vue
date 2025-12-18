@@ -163,53 +163,163 @@ getCode()
 getCookie()
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
+/* ===============================
+   登录页整体背景
+   =============================== */
 .login {
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  background-image: url("../assets/images/login-background.png");
+
+  background: url("../assets/images/login-background.png") no-repeat center center;
   background-size: cover;
-}
-.title {
-  margin: 0px auto 30px auto;
-  text-align: center;
-  color: #707070;
+  padding: 20px;
 }
 
+/* ===============================
+   登录卡片（毛玻璃 + 米白）
+   =============================== */
 .login-form {
-  border-radius: 6px;
-  background: #ffffff;
-  width: 400px;
-  padding: 25px 25px 5px 25px;
+  width: 420px;
+  max-width: calc(100vw - 40px);
+  padding: 38px 30px 28px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   z-index: 1;
-  .el-input {
-    height: 40px;
+
+  /* 输入框高度统一 */
+  :deep(.el-input) {
+    height: 44px;
+
     input {
-      height: 40px;
+      height: 44px;
+      font-size: 15px;
     }
   }
-  .input-icon {
-    height: 39px;
-    width: 14px;
-    margin-left: 0px;
-  }
 }
-.login-tip {
-  font-size: 13px;
+
+/* ===============================
+   标题
+   =============================== */
+.title {
+  margin: 0 auto 26px;
   text-align: center;
-  color: #bfbfbf;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #2A5E23; /* 深绿 */
 }
+
+/* ===============================
+   输入框前缀图标
+   =============================== */
+.input-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.75;
+}
+
+/* ===============================
+   Element 输入框风格优化
+   =============================== */
+.login-form :deep(.el-input__wrapper) {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #E5E7EB;
+  box-shadow: none;
+  transition: all 0.25s ease;
+}
+
+.login-form :deep(.el-input__wrapper.is-focus) {
+  border-color: rgba(42, 94, 35, 0.55);
+  box-shadow: 0 0 0 3px rgba(42, 94, 35, 0.15);
+}
+
+/* ===============================
+   验证码区域
+   =============================== */
 .login-code {
   width: 33%;
-  height: 40px;
+  height: 44px;
   float: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
   img {
     cursor: pointer;
-    vertical-align: middle;
+    height: 44px;
+    border-radius: 10px;
+    padding: 0 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #E5E7EB;
   }
 }
+
+.login-code-img {
+  height: 44px;
+  padding-left: 10px;
+}
+
+/* ===============================
+   记住密码
+   =============================== */
+.login-form :deep(.el-checkbox) {
+  margin: 8px 0 20px 0 !important;
+  --el-checkbox-checked-text-color: #2A5E23;
+}
+
+/* ===============================
+   登录按钮（深绿）
+   =============================== */
+.login-form :deep(.el-button--primary) {
+  height: 46px;
+  border-radius: 10px;
+  background: #2A5E23 !important;
+  border-color: #2A5E23 !important;
+
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  transition: all 0.25s ease;
+}
+
+.login-form :deep(.el-button--primary:hover) {
+  background: #1E4A1A !important;
+  border-color: #1E4A1A !important;
+  box-shadow: 0 10px 22px rgba(42, 94, 35, 0.2);
+  transform: translateY(-1px);
+}
+
+.login-form :deep(.el-button--primary:active) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ===============================
+   注册链接
+   =============================== */
+.login-form :deep(.link-type) {
+  color: #2A5E23;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-form :deep(.link-type:hover) {
+  text-decoration: underline;
+}
+
+/* ===============================
+   底部（保持低调）
+   =============================== */
 .el-login-footer {
   height: 40px;
   line-height: 40px;
@@ -217,13 +327,22 @@ getCookie()
   bottom: 0;
   width: 100%;
   text-align: center;
-  color: #fff;
-  font-family: Arial;
   font-size: 12px;
+  color: rgba(55, 65, 81, 0.6);
   letter-spacing: 1px;
 }
-.login-code-img {
-  height: 40px;
-  padding-left: 12px;
+
+/* ===============================
+   响应式
+   =============================== */
+@media (max-width: 768px) {
+  .login-form {
+    padding: 30px 20px 22px;
+    border-radius: 14px;
+  }
+
+  .title {
+    font-size: 26px;
+  }
 }
 </style>
