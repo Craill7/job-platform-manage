@@ -308,6 +308,9 @@ const jobCategories = ref([])
 const provinces = ref([])
 const cities = ref([])
 
+// 新增：保存原始的岗位数据，用于调试
+const originalJobData = ref(null)
+
 const data = reactive({
   form: {},
   queryParams: {
@@ -440,6 +443,8 @@ function reset() {
     status: null,
     postedByUserId: null
   }
+  cities.value = []
+  originalJobData.value = null
   proxy.resetForm("jobsRef")
 }
 
@@ -474,35 +479,95 @@ function handleAdd() {
 }
 
 /** 修改按钮操作 */
-function handleUpdate(row) {
+async function handleUpdate(row) {
   reset()
   const _id = row.id || ids.value
-  getJobs(_id).then(response => {
-    form.value = response.data
-    // 如果已有省份ID，加载对应的城市列表
-    if (form.value.provinceId) {
-      handleProvinceChange(form.value.provinceId)
+  
+  try {
+    const response = await getJobs(_id)
+    originalJobData.value = response.data
+    console.log('原始岗位数据:', originalJobData.value)
+    
+    // 关键修复：确保数字类型转换
+    const jobData = {
+      ...response.data,
+      // 确保这些字段是数字类型
+      provinceId: response.data.provinceId ? Number(response.data.provinceId) : null,
+      cityId: response.data.cityId ? Number(response.data.cityId) : null,
+      type: response.data.type ? Number(response.data.type) : null,
+      workNature: response.data.workNature ? Number(response.data.workNature) : null,
+      requiredDegree: response.data.requiredDegree ? Number(response.data.requiredDegree) : null,
+      status: response.data.status ? Number(response.data.status) : null,
     }
+    
+    console.log('转换后的岗位数据:', jobData)
+    
+    // 先设置基本表单数据
+    form.value = jobData
+    
+    // 如果已有省份ID，加载对应的城市列表
+    if (jobData.provinceId) {
+      // 先清空城市列表
+      cities.value = []
+      
+      // 异步加载城市
+      const cityResponse = await listCitiesByProvince(jobData.provinceId)
+      const loadedCities = cityResponse.data || []
+      
+      // 确保城市数据中的id也是数字类型
+      cities.value = loadedCities.map(city => ({
+        ...city,
+        id: Number(city.id)
+      }))
+      
+      console.log('加载的城市数据:', cities.value)
+      console.log('当前表单的cityId:', form.value.cityId, '类型:', typeof form.value.cityId)
+      
+      // 检查城市是否存在
+      if (jobData.cityId) {
+        const cityExists = cities.value.some(city => city.id === jobData.cityId)
+        console.log('城市是否存在:', cityExists)
+        if (!cityExists) {
+          console.warn('城市ID不存在于加载的城市列表中:', jobData.cityId)
+          form.value.cityId = null
+        }
+      }
+      
+      // 使用 $nextTick 确保DOM更新
+      proxy.$nextTick(() => {
+        console.log('DOM更新后，城市下拉框应该显示名称了')
+      })
+    }
+    
     open.value = true
     title.value = "修改岗位管理"
-  })
+  } catch (error) {
+    console.error('获取岗位数据失败:', error)
+    proxy.$modal.msgError("获取岗位数据失败")
+  }
 }
 
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["jobsRef"].validate(valid => {
     if (valid) {
+      console.log('提交的表单数据:', form.value)
+      
       if (form.value.id != null) {
         updateJobs(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
           getList()
+        }).catch(error => {
+          console.error('修改失败:', error)
         })
       } else {
         addJobs(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功")
           open.value = false
           getList()
+        }).catch(error => {
+          console.error('新增失败:', error)
         })
       }
     }
@@ -531,6 +596,11 @@ function handleExport() {
 function loadJobCategories() {
   listCategories({}).then(response => {
     jobCategories.value = response.rows || []
+    // 确保岗位类别的id也是数字类型
+    jobCategories.value = jobCategories.value.map(category => ({
+      ...category,
+      id: Number(category.id)
+    }))
   })
 }
 
@@ -539,7 +609,7 @@ function getCategoryName(categoryId) {
   if (!categoryId) {
     return ''
   }
-  const category = jobCategories.value.find(item => item.id === categoryId)
+  const category = jobCategories.value.find(item => item.id === Number(categoryId))
   return category ? category.name : ''
 }
 
@@ -547,17 +617,38 @@ function getCategoryName(categoryId) {
 function loadProvinces() {
   listProvinces({}).then(response => {
     provinces.value = response.data || []
+    // 确保省份的id也是数字类型
+    provinces.value = provinces.value.map(province => ({
+      ...province,
+      id: Number(province.id)
+    }))
   })
 }
 
 // 省份改变时加载城市列表
-function handleProvinceChange(provinceId) {
+async function handleProvinceChange(provinceId) {
+  console.log('省份改变:', provinceId, '类型:', typeof provinceId)
+  
+  // 清空当前城市
   form.value.cityId = null
   cities.value = []
+  
   if (provinceId) {
-    listCitiesByProvince(provinceId).then(response => {
-      cities.value = response.data || []
-    })
+    try {
+      const response = await listCitiesByProvince(provinceId)
+      const loadedCities = response.data || []
+      
+      // 确保城市数据中的id也是数字类型
+      cities.value = loadedCities.map(city => ({
+        ...city,
+        id: Number(city.id)
+      }))
+      
+      console.log('加载的城市列表:', cities.value)
+    } catch (error) {
+      console.error('加载城市数据失败:', error)
+      proxy.$modal.msgWarning("加载城市数据失败，请重新选择省份")
+    }
   }
 }
 
@@ -585,7 +676,19 @@ function handleCompanySelect(item) {
   form.value.companyName = item.companyName
 }
 
+// 调试函数：检查当前数据状态
+function debugData() {
+  console.log('=== 调试信息 ===')
+  console.log('表单数据:', form.value)
+  console.log('省份列表:', provinces.value)
+  console.log('城市列表:', cities.value)
+  console.log('岗位类别列表:', jobCategories.value)
+  console.log('原始岗位数据:', originalJobData.value)
+}
+
+// 初始化加载
 getList()
 loadJobCategories()
 loadProvinces()
 </script>
+
