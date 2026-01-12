@@ -78,4 +78,10 @@ public interface JobsMapper
      * 查看岗位详情 (VO)
      */
     public JobDetailVo selectJobDetailVoById(Long id);
+
+    /**
+     * 统计待审核岗位数量
+     * * @return 数量
+     */
+    public int countPendingJobs();
 }

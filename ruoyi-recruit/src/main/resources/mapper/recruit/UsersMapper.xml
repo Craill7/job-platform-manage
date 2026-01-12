@@ -86,6 +86,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE u.id = #{id}
     </select>
 
+    <select id="countPendingCompanies" resultType="int">
+        select count(1) from users where role = 2 and status = 0
+    </select>
+
     <insert id="insertUsers" parameterType="Users" useGeneratedKeys="true" keyProperty="id">
         insert into users
         <trim prefix="(" suffix=")" suffixOverrides=",">

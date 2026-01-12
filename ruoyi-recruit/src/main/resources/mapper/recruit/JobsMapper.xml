@@ -281,4 +281,8 @@
         select count(1) from jobs
         where deadline >= CURDATE()
     </select>
+
+    <select id="countPendingJobs" resultType="int">
+        select count(1) from jobs where status = 10
+    </select>
 </mapper>

@@ -142,9 +142,12 @@ const timeline = ref([])
     })
     const data = res.data || {}
     
-    // 更新待审核数量
-    pendingJobCount.value = data.currentRecruitCount ?? 0
-    pendingAccountCount.value = data.companyCount ?? 0
+    // 【修改点】：使用后端新增的统计字段
+    // pendingJobCount 对应后端 result.put("pendingJobCount", ...)
+    pendingJobCount.value = data.pendingJobCount ?? 0
+
+    // pendingAccountCount 对应后端 result.put("pendingCompanyCount", ...)
+    pendingAccountCount.value = data.pendingCompanyCount ?? 0
 
     // 更新最新动态（招聘活动）
     // 对时间进行排序，按日期从最近到最远

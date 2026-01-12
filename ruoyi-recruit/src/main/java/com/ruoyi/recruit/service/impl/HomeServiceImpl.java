@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.ruoyi.recruit.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.recruit.domain.Events;
-import com.ruoyi.recruit.mapper.ApplicationsMapper;
-import com.ruoyi.recruit.mapper.CompaniesMapper;
-import com.ruoyi.recruit.mapper.EventsMapper;
-import com.ruoyi.recruit.mapper.JobsMapper;
 import com.ruoyi.recruit.service.IHomeService;
 
 /**
@@ -35,6 +33,9 @@ public class HomeServiceImpl implements IHomeService
     @Autowired
     private EventsMapper eventsMapper;
 
+    @Autowired
+    private UsersMapper usersMapper;
+
     /**
      * 获取首页概览数据
      * 
@@ -44,6 +45,13 @@ public class HomeServiceImpl implements IHomeService
     public Map<String, Object> getHomeOverview()
     {
         Map<String, Object> result = new HashMap<>();
+        // 2. 统计待审核岗位数量
+        int pendingJobCount = jobsMapper.countPendingJobs();
+        result.put("pendingJobCount", pendingJobCount);
+
+        // 3. 统计待审核企业账号数量
+        int pendingCompanyCount = usersMapper.countPendingCompanies();
+        result.put("pendingCompanyCount", pendingCompanyCount);
 
         // 1. 统计未到截止日期的岗位数量
         int currentRecruitCount = jobsMapper.countCurrentRecruitJobs();

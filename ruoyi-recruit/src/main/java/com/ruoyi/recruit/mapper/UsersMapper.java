@@ -66,5 +66,11 @@ public interface UsersMapper
     /** 查询企业审核详情 (返回 VO) */
     public CompanyAudit selectCompanyAuditById(Long id);
 
+    /**
+     * 统计待审核企业账号数量
+     * * @return 数量
+     */
+    public int countPendingCompanies();
+
 
 }
